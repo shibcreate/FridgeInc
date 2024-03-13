@@ -7,7 +7,7 @@ export default function Navigation() {
       <Navbar bg="dark" data-bs-theme="dark">
         <Container fluid>
           <Nav className="me-auto">
-            <Nav.Link href="/home">Home</Nav.Link>
+            <Nav.Link href="/">Home</Nav.Link>
             <Nav.Link href="/recipes">Recipes</Nav.Link>
             <Nav.Link href="/profile">Profile</Nav.Link>
             <Nav.Link href="/login">Log In</Nav.Link>
