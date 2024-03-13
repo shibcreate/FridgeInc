@@ -1,19 +1,22 @@
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
+import react from 'react';
+import {Link} from 'react-router-dom'
 
 function RecipesList() {
   return (
+    <div>
+    <h1> Lastest Recipes </h1>
     <Card style={{ width: '18rem' }}>
       <Card.Img variant="top" src="/logo192.png" />
       <Card.Body>
         <Card.Title>Recipe Name</Card.Title>
-        <Card.Text>
-          Some quick example text to build on the card title and make up the
-          bulk of the card's content.
-        </Card.Text>
-        <Button variant="primary">Read more</Button>
+        <Link to='/recipeDetail'>
+        <Button variant="outline-dark">Read more</Button>
+        </Link>
       </Card.Body>
     </Card>
+    </div>
   );
 }
 
