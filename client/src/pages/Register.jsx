@@ -2,6 +2,7 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import {Link} from 'react-router-dom';
 
 export default function Register() {
     return (
@@ -16,6 +17,13 @@ export default function Register() {
                     <Form.Control required type='text' placeholder="Last name" />
                 </Form.Group>
             </Row>
+            <Form.Group className="mb-3" controlId="formBasicEmail">
+                <Form.Label>Email address</Form.Label>
+                <Form.Control type="email" placeholder="Enter email" />
+                <Form.Text className="text-muted">
+                    We'll never share your email with anyone else.
+                </Form.Text>
+            </Form.Group>
             <Form.Group className="mb-3" controlId="formBasicPassword">
                 <Form.Label>Password</Form.Label>
                 <Form.Control type="password" placeholder="Password" />
@@ -25,9 +33,11 @@ export default function Register() {
                 <option value="1">Vegan</option>
                 <option value="2">Vegetarian</option>
             </Form.Select>
+            <Link to='/profile'>
             <Button variant="primary" type="submit">
                 Submit
             </Button>
+            </Link>
         </Form>
     );
 }
