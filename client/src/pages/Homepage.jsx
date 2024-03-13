@@ -17,10 +17,10 @@ export default function Homepage() {
           <p>Find recipes within a snap!</p>
           <p>Either finding a quick recipes or sharing your own, FridgeInc offers it all!</p> 
           <Link to='/register'>
-            <Button variant="outline-dark">Join Community</Button>
+            <Button style={{margin:'10px'}} variant="outline-dark">Join Community</Button>
           </Link>
           <Link to='/recipes'>
-            <Button variant="outline-dark">Explore Recipes</Button>
+            <Button style={{margin:'10px'}} variant="outline-dark">Explore Recipes</Button>
           </Link>
         </Col>
       </Row>
