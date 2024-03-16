@@ -24,8 +24,8 @@ function App() {
           <Route path="/about" element={<About/>} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/recipes" element={<RecipesList />} />
+          <Route path="/profile" element={<Profile />} /> //protected route
+          <Route path="/recipes" element={<RecipesList />} /> //protected route
           <Route path="/recipeDetail" element={<RecipeDetail />} />
         </Routes>
         </main>

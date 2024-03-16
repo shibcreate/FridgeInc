@@ -28,11 +28,6 @@ export default function Register() {
                 <Form.Label>Password</Form.Label>
                 <Form.Control type="password" placeholder="Password" />
             </Form.Group>
-            <Form.Select aria-label="Default select example">
-                <option>Choose your diet</option>
-                <option value="1">Vegan</option>
-                <option value="2">Vegetarian</option>
-            </Form.Select>
             <Link to='/profile'>
             <Button variant="primary" type="submit">
                 Submit
