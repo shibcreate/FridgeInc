@@ -28,7 +28,7 @@ export default function Register() {
 
   return (
     <Form onSubmit={handleSubmit}>
-      <Form.Group as={Col} md="6">
+      <Form.Group md="6">
         <Form.Label>Name</Form.Label>
         <Form.Control
           required
