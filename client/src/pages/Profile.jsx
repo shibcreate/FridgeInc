@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import { ObjectDetector } from "./objectD/objectDetector";
 
 function Profile() {
   const [image, setImage] = useState(null);
@@ -33,7 +34,15 @@ function Profile() {
     <div>
       <h1>Profile</h1>
       <h3>Snap a picture of your fridge</h3>
-      {image ? (
+      <button onClick={handleImageUpload}>Upload Image</button>
+      <input
+        type="file"
+        accept="image/*"
+        ref={fileInputRef}
+        style={{ display: 'none' }}
+        onChange={handleFileChange}
+      />
+      {image && (
         <div>
           <button onClick={handleRemoveImage}>Remove Image</button>
           <div style={{ display: 'inline-block' }}>
@@ -48,17 +57,9 @@ function Profile() {
               }}
             />
           </div>
+          <ObjectDetector image={image} />
         </div>
-      ) : (
-        <button onClick={handleImageUpload}>Upload Image</button>
       )}
-      <input
-        type="file"
-        accept="image/*"
-        ref={fileInputRef}
-        style={{ display: 'none' }}
-        onChange={handleFileChange}
-      />
       {/* for Tensorflow */}
       {imageDataForTensorFlow && (
         <div style={{ display: 'none' }}>
