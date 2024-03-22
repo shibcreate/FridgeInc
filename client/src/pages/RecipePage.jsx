@@ -1,5 +1,3 @@
-
-
 function RecipeDetail() {
   return (
     <div className='recipeDetail'>
