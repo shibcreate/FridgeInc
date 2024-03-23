@@ -1,22 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
+import Button from 'react-bootstrap/Button';
 
 const APP_ID = '67d82505';
 const APP_KEY = '6cc2264f11d4364c5dfdab7aab84538f';
-
-const DEFAULT_QUERY = 'pork'; // Default search query
+const DEFAULT_QUERY = 'rose, milk'; // Default search query
 
 function RecipesList() {
-  const [originalRecipes, setOriginalRecipes] = useState([]);
   const [recipes, setRecipes] = useState([]);
   const [filters, setFilters] = useState({
     vegetarian: false,
     glutenFree: false,
     noEggs: false,
   });
-  const [selectedRecipe, setSelectedRecipe] = useState(null);
+
+  // State variables to track likes and dislikes
+  const [likes, setLikes] = useState({});
+  const [dislikes, setDislikes] = useState({});
 
   useEffect(() => {
     fetchRecipes(DEFAULT_QUERY); // Fetch recipes with default query on component mount
@@ -27,41 +28,57 @@ function RecipesList() {
       const response = await axios.get(
         `https://api.edamam.com/search?q=${query}&app_id=${APP_ID}&app_key=${APP_KEY}`
       );
-      setOriginalRecipes(response.data.hits);
+      console.log('API response:', response.data); // Log the API response to inspect data
       setRecipes(response.data.hits);
+
+      // Initialize likes and dislikes state objects for each recipe
+      const initialLikes = {};
+      const initialDislikes = {};
+      response.data.hits.forEach((recipe) => {
+        initialLikes[recipe.recipe.uri] = 0;
+        initialDislikes[recipe.recipe.uri] = 0;
+      });
+      setLikes(initialLikes);
+      setDislikes(initialDislikes);
     } catch (error) {
       console.error('Error fetching recipes:', error);
     }
   };
 
   const handleFilterChange = (filterName) => {
-    setFilters({ ...filters, [filterName]: !filters[filterName] });
+    setFilters((prevFilters) => ({ ...prevFilters, [filterName]: !prevFilters[filterName] }));
   };
 
-  const handleReadMore = (recipe) => {
-    setSelectedRecipe(recipe);
+  const handleLike = (uri) => {
+    if (likes[uri] === 0 && dislikes[uri] === 0) {
+      setLikes({ ...likes, [uri]: 1 });
+      setDislikes({ ...dislikes, [uri]: 0 });
+    } else if (likes[uri] === 1) {
+      setLikes({ ...likes, [uri]: 0 });
+    }
   };
 
-  useEffect(() => {
-    const filteredRecipes = originalRecipes.filter((recipe) => {
-      const { vegetarian, glutenFree, noEggs } = filters;
-      const { healthLabels } = recipe.recipe;
+  const handleDislike = (uri) => {
+    if (dislikes[uri] === 0 && likes[uri] === 0) {
+      setDislikes({ ...dislikes, [uri]: 1 });
+      setLikes({ ...likes, [uri]: 0 });
+    } else if (dislikes[uri] === 1) {
+      setDislikes({ ...dislikes, [uri]: 0 });
+    }
+  };
 
-      if (vegetarian && !healthLabels.includes('Vegetarian')) {
-        return false;
-      }
-      if (glutenFree && !healthLabels.includes('Gluten-Free')) {
-        return false;
-      }
-      if (noEggs && healthLabels.includes('No Eggs')) {
-        return false;
-      }
-
-      return true;
-    });
-
-    setRecipes(filteredRecipes);
-  }, [filters, originalRecipes]);
+  const filterRecipes = (recipe) => {
+    if (filters.vegetarian && !recipe.recipe.healthLabels.includes('Vegetarian')) {
+      return false;
+    }
+    if (filters.glutenFree && !recipe.recipe.healthLabels.includes('Gluten-Free')) {
+      return false;
+    }
+    if (filters.noEggs && recipe.recipe.ingredients.some((ingredient) => ingredient.text.toLowerCase().includes('egg'))) {
+      return false;
+    }
+    return true;
+  };
 
   return (
     <div>
@@ -93,37 +110,35 @@ function RecipesList() {
         </label>
       </div>
       <div className="recipe-grid">
-        {recipes.map((recipe) => (
-          <Card key={recipe.recipe.uri} style={{ width: '18rem' }}>
-            <Card.Img variant="top" src={recipe.recipe.image} />
-            <Card.Body>
-              <Card.Title>{recipe.recipe.label}</Card.Title>
-              <Button variant="outline-dark" onClick={() => handleReadMore(recipe)}>
-                Read more
-              </Button>
-            </Card.Body>
-            {selectedRecipe && selectedRecipe.recipe.uri === recipe.recipe.uri && (
-              <Card.Footer>
-                <h4>{selectedRecipe.recipe.label}</h4>
-                <p>Author: {selectedRecipe.recipe.source}</p>
-                <p>Prep time: {selectedRecipe.recipe.totalTime}</p>
-                <p>Cooking time: {selectedRecipe.recipe.cookTime}</p>
-                <h4>Ingredients</h4>
-                <ul>
-                  {selectedRecipe.recipe.ingredients.map((ingredient, index) => (
-                    <li key={index}>{ingredient.text}</li>
-                  ))}
-                </ul>
-                <h4>Instructions</h4>
-                <ol>
-                  {selectedRecipe.recipe.instructions.map((step, index) => (
-                    <li key={index}>{step}</li>
-                  ))}
-                </ol>
-              </Card.Footer>
-            )}
-          </Card>
-        ))}
+        {recipes &&
+          recipes.filter(filterRecipes).map((recipe, index) => (
+            <Card key={index} style={{ width: '18rem' }}>
+              <Card.Img variant="top" src={recipe.recipe.image} />
+              <Card.Body>
+                <h3 style={{ marginBottom: '10px', color: 'blue', fontFamily: 'Arial' }}>{recipe.recipe.label}</h3>
+                <Card.Text style={{ fontSize: '14px', marginBottom: '15px' }}>
+                  <h4>Ingredients</h4>
+                  <ul>
+                    {recipe.recipe.ingredients &&
+                      recipe.recipe.ingredients.map((ingredient, index) => (
+                        <li key={index}>{ingredient.text}</li>
+                      ))}
+                  </ul>
+                </Card.Text>
+                <div className="button-group">
+                  <Button variant={likes[recipe.recipe.uri] === 1 ? 'success' : 'outline-success'} onClick={() => handleLike(recipe.recipe.uri)}>
+                    Like
+                  </Button>
+                  <Button variant={dislikes[recipe.recipe.uri] === 1 ? 'danger' : 'outline-danger'} onClick={() => handleDislike(recipe.recipe.uri)} style={{ marginLeft: '10px' }}>
+                    Dislike
+                  </Button>
+                  <Button variant="primary" href={recipe.recipe.url} target="_blank" rel="noopener noreferrer" style={{ marginTop: '10px', width: '100%' }}>
+                    View Preparation
+                  </Button>
+                </div>
+              </Card.Body>
+            </Card>
+          ))}
       </div>
     </div>
   );

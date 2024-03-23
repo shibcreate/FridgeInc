@@ -9,7 +9,6 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Profile from './pages/Profile';
 import RecipesList from './pages/RecipesList';
-import RecipeDetail from './pages/RecipePage';
 import Account from './pages/Account';
 //import components
 import Navigation from './components/Navigation'
@@ -28,7 +27,6 @@ function App() {
           <Route path="/account" element={<Account />} />
           <Route path="/profile" element={<Profile />} /> //protected route
           <Route path="/recipes" element={<RecipesList />} /> //protected route
-          <Route path="/recipeDetail" element={<RecipeDetail />} />
         </Routes>
         </main>
       <Footer />
