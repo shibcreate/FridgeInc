@@ -10,6 +10,7 @@ import Register from './pages/Register';
 import Profile from './pages/Profile';
 import RecipesList from './pages/RecipesList';
 import RecipeDetail from './pages/RecipePage';
+import Account from './pages/Account';
 //import components
 import Navigation from './components/Navigation'
 import Footer from './components/Footer'
@@ -24,6 +25,7 @@ function App() {
           <Route path="/about" element={<About/>} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/account" element={<Account />} />
           <Route path="/profile" element={<Profile />} /> //protected route
           <Route path="/recipes" element={<RecipesList />} /> //protected route
           <Route path="/recipeDetail" element={<RecipeDetail />} />

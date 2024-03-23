@@ -49,7 +49,7 @@ export default function Login() {
         />
       </Form.Group>
      
-      <Button variant="primary" type="submit" className="mb-3">
+      <Button as={Link} to={"/account"}variant="primary" type="submit" className="mb-3">
         Submit
       </Button>
      
