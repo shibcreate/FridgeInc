@@ -1,4 +1,5 @@
 import React, { useRef, useState, useEffect } from "react";
+import axios from 'axios'
 import styled from "styled-components";
 
 import "@tensorflow/tfjs-backend-cpu";
@@ -40,29 +41,38 @@ const Label = styled.span`
   border-radius: 2px;
 `;
 
-export function ObjectDetector({ image }) {
+const ObjectDetector = ({ image }) => {
   const imageRef = useRef();
   const [predictions, setPredictions] = useState([]);
-  const [forceUpdate, setForceUpdate] = useState(false);
 
   useEffect(() => {
     const detectObjectsOnImage = async () => {
-      const model = await cocoSsd.load();
-      const predictions = await model.detect(imageRef.current);
-      setPredictions(predictions);
-      // Force re-render to update layout
-      setForceUpdate(prev => !prev);
+      try {
+        const response = await axios.post('https://detect.roboflow.com/aicook-lcv4d/3', {
+          params: {
+            api_key: "85jvyJn6mI4JE5KvPudI"
+        },
+        data: image,
+        image: image.split(',')[1],
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        }
+      })
+
+        if (!response.data.predictions) {
+          throw new Error('Failed to detect objects');
+        }
+
+        setPredictions(response.data.predictions);
+      } catch (error) {
+        console.error('Error detecting objects:', error);
+      }
     };
 
     if (imageRef.current && image) {
       detectObjectsOnImage();
     }
   }, [image]);
-
-  useEffect(() => {
-    // Ensure a layout update when the component mounts or updates
-    setForceUpdate(prev => !prev);
-  }, []);
 
   return (
     <ObjectDetectorContainer>
@@ -85,3 +95,5 @@ export function ObjectDetector({ image }) {
     </ObjectDetectorContainer>
   );
 }
+
+export default ObjectDetector;

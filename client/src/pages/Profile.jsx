@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { ObjectDetector } from "./objectD/objectDetector";
+import ObjectDetector from "./objectD/objectDetector"; 
 
 function Profile() {
   const [image, setImage] = useState(null);

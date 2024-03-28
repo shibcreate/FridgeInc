@@ -2,6 +2,7 @@ const express = require("express");
 const mongoose = require('mongoose');
 const cors = require("cors");
 const UserModel = require("./models/Users");
+const axios = require('axios')
 
 const app = express();
 app.use(express.json());
@@ -48,6 +49,24 @@ app.post('/register', (req, res) => {
       console.error('Error during registration:', err);
       res.status(500).json({ error: 'Internal server error' });
     });
+});
+
+app.post('/detect-objects', async (req, res) => {
+  try {
+    const { image, api_key } = req.body;
+    
+    // Make sure to forward the API key to the Roboflow endpoint
+    const response = await axios.post('https://detect.roboflow.com/aicook-lcv4d/3', {
+      image,
+      api_key
+    });
+
+    // Send the response from Roboflow to the frontend
+    res.json(response.data);
+  } catch (error) {
+    console.error('Error detecting objects:', error.message);
+    res.status(500).json({ error: 'Failed to detect objects' });
+  }
 });
 
 app.listen(3001, () => {
