@@ -17,7 +17,7 @@ export default function Login() {
         password,
       });
       console.log(response);
-      if (response.data === 'Success') {
+      if (response.status === 200) {
         navigate('/profile');
       }
     } catch (error) {
@@ -49,7 +49,7 @@ export default function Login() {
         />
       </Form.Group>
      
-      <Button as={Link} to={"/account"}variant="primary" type="submit" className="mb-3">
+      <Button variant="primary" type="submit" className="mb-3">
         Submit
       </Button>
      
