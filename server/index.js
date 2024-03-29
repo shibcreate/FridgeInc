@@ -23,7 +23,7 @@ mongoose.connect("mongodb+srv://admin:Testing1234!@fridgeinc.rufgqkq.mongodb.net
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
-
+//DATABASE CONNECTION
 const db = mongoose.connection;
 db.on('error', (err) => {
   console.error('MongoDB connection error:', err);
@@ -31,7 +31,7 @@ db.on('error', (err) => {
 db.once('open', () => {
   console.log('Connected to MongoDB');
 });
-
+//ROUTES HANDLERS
 app.post('/register', (req, res) => {
   const {name, email, password } = req.body;
   bcrypt.hash(password, 10).then((hash) => {
