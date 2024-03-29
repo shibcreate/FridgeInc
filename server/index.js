@@ -12,10 +12,6 @@ app.use(cors({
   origin: 'http://localhost:5173',
   credentials: true,
 }));
-app.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Credentials', 'true');
-  next();
-});
 app.use(cookieParser());
 
 // MongoDB connection
