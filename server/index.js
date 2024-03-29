@@ -60,7 +60,6 @@ app.post('/login', async (req, res) => {
             httpOnly: true,
           });
           res.json('Logged in');
-          console.log('logged in')
         }
       });
 });
