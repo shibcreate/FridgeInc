@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ObjectDetector } from "./objectD/objectDetector";
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 
 function Profile() {
   const [image, setImage] = useState(null);
@@ -13,7 +14,7 @@ function Profile() {
     const checkAuthentication = async () => {
       try {
         const response = await axios.get('http://localhost:3001/profile', {
-          withCredentials: true 
+          withCredentials: true
         });
         if (response.data === 'profile page') {
           setIsLoggedIn(true);

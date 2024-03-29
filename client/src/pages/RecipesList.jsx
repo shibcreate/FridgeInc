@@ -18,10 +18,29 @@ function RecipesList() {
   // State variables to track likes and dislikes
   const [likes, setLikes] = useState({});
   const [dislikes, setDislikes] = useState({});
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // State to track login status
 
   useEffect(() => {
-    fetchRecipes(DEFAULT_QUERY); // Fetch recipes with default query on component mount
-  }, []);
+    const checkAuthentication = async () => {
+      try {
+        const response = await axios.get('http://localhost:3001/recipes', {
+          withCredentials: true
+        });
+        if (response.data === 'recipe list') {
+          setIsLoggedIn(true);
+        }
+      } catch (error) {
+        setIsLoggedIn(false);
+      }
+    };
+    checkAuthentication();
+  }, []); // Run only once when the component mounts
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      fetchRecipes(DEFAULT_QUERY); // Fetch recipes with default query if user is logged in
+    }
+  }, [isLoggedIn]); // Fetch recipes when login status changes
 
   const fetchRecipes = async (query) => {
     try {
@@ -82,64 +101,71 @@ function RecipesList() {
 
   return (
     <div>
-      <h1>Recommended Recipes</h1>
-      <div className="filter-options">
-        <label className="filter-label">
-          <input
-            type="checkbox"
-            checked={filters.vegetarian}
-            onChange={() => handleFilterChange('vegetarian')}
-          />
-          Vegetarian
-        </label>
-        <label className="filter-label">
-          <input
-            type="checkbox"
-            checked={filters.glutenFree}
-            onChange={() => handleFilterChange('glutenFree')}
-          />
-          Gluten-Free
-        </label>
-        <label className="filter-label">
-          <input
-            type="checkbox"
-            checked={filters.noEggs}
-            onChange={() => handleFilterChange('noEggs')}
-          />
-          No Eggs
-        </label>
-      </div>
-      <div className="recipe-grid">
-        {recipes &&
-          recipes.filter(filterRecipes).map((recipe, index) => (
-            <Card key={index} style={{ width: '18rem' }}>
-              <Card.Img variant="top" src={recipe.recipe.image} />
-              <Card.Body>
-                <h3 style={{ marginBottom: '10px', color: 'blue', fontFamily: 'Arial' }}>{recipe.recipe.label}</h3>
-                <Card.Text style={{ fontSize: '14px', marginBottom: '15px' }}>
-                  <h4>Ingredients</h4>
-                  <ul>
-                    {recipe.recipe.ingredients &&
-                      recipe.recipe.ingredients.map((ingredient, index) => (
-                        <li key={index}>{ingredient.text}</li>
-                      ))}
-                  </ul>
-                </Card.Text>
-                <div className="button-group">
-                  <Button variant={likes[recipe.recipe.uri] === 1 ? 'success' : 'outline-success'} onClick={() => handleLike(recipe.recipe.uri)}>
-                    Like
-                  </Button>
-                  <Button variant={dislikes[recipe.recipe.uri] === 1 ? 'danger' : 'outline-danger'} onClick={() => handleDislike(recipe.recipe.uri)} style={{ marginLeft: '10px' }}>
-                    Dislike
-                  </Button>
-                  <Button variant="primary" href={recipe.recipe.url} target="_blank" rel="noopener noreferrer" style={{ marginTop: '10px', width: '100%' }}>
-                    View Preparation
-                  </Button>
-                </div>
-              </Card.Body>
-            </Card>
-          ))}
-      </div>
+      {/* Conditionally render content based on login status */}
+      {isLoggedIn ? (
+        <>
+          <h1>Recommended Recipes</h1>
+          <div className="filter-options">
+            <label className="filter-label">
+              <input
+                type="checkbox"
+                checked={filters.vegetarian}
+                onChange={() => handleFilterChange('vegetarian')}
+              />
+              Vegetarian
+            </label>
+            <label className="filter-label">
+              <input
+                type="checkbox"
+                checked={filters.glutenFree}
+                onChange={() => handleFilterChange('glutenFree')}
+              />
+              Gluten-Free
+            </label>
+            <label className="filter-label">
+              <input
+                type="checkbox"
+                checked={filters.noEggs}
+                onChange={() => handleFilterChange('noEggs')}
+              />
+              No Eggs
+            </label>
+          </div>
+          <div className="recipe-grid">
+            {recipes &&
+              recipes.filter(filterRecipes).map((recipe, index) => (
+                <Card key={index} style={{ width: '18rem' }}>
+                  <Card.Img variant="top" src={recipe.recipe.image} />
+                  <Card.Body>
+                    <h3 style={{ marginBottom: '10px', color: 'blue', fontFamily: 'Arial' }}>{recipe.recipe.label}</h3>
+                    <Card.Text style={{ fontSize: '14px', marginBottom: '15px' }}>
+                      <h4>Ingredients</h4>
+                      <ul>
+                        {recipe.recipe.ingredients &&
+                          recipe.recipe.ingredients.map((ingredient, index) => (
+                            <li key={index}>{ingredient.text}</li>
+                          ))}
+                      </ul>
+                    </Card.Text>
+                    <div className="button-group">
+                      <Button variant={likes[recipe.recipe.uri] === 1 ? 'success' : 'outline-success'} onClick={() => handleLike(recipe.recipe.uri)}>
+                        Like
+                      </Button>
+                      <Button variant={dislikes[recipe.recipe.uri] === 1 ? 'danger' : 'outline-danger'} onClick={() => handleDislike(recipe.recipe.uri)} style={{ marginLeft: '10px' }}>
+                        Dislike
+                      </Button>
+                      <Button variant="primary" href={recipe.recipe.url} target="_blank" rel="noopener noreferrer" style={{ marginTop: '10px', width: '100%' }}>
+                        View Preparation
+                      </Button>
+                    </div>
+                  </Card.Body>
+                </Card>
+              ))}
+          </div>
+        </>
+      ) : (
+        <p>Please log in to view recipes</p>
+      )}
     </div>
   );
 }
