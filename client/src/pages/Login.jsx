@@ -15,6 +15,8 @@ export default function Login() {
       const response = await axios.post('http://localhost:3001/login', {
         email,
         password,
+      }, {
+        withCredentials: true,
       });
       console.log(response);
       if (response.status === 200) {
@@ -48,11 +50,11 @@ export default function Login() {
           onChange={(e) => setPassword(e.target.value)}
         />
       </Form.Group>
-     
+
       <Button variant="primary" type="submit" className="mb-3">
         Submit
       </Button>
-     
+
       <Link to="/register" className="btn btn-default border w-100 bg-light rounded-0 text-decoration-none">
         Sign Up
       </Link>
