@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ObjectDetector } from "./objectD/objectDetector";
 import axios from 'axios';
-import { Link } from 'react-router-dom';
 
 function Profile() {
   const [image, setImage] = useState(null);
