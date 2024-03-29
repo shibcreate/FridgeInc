@@ -3,7 +3,6 @@ import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
-import Col from 'react-bootstrap/Col';
 
 export default function Register() {
   const [name, setName] = useState('');
@@ -18,9 +17,13 @@ export default function Register() {
         name,
         email,
         password,
+      }, {
+        withCredentials: true,
       });
       console.log(response);
-      navigate('/login');
+      if (response.status === 200) {
+        navigate('/profile');
+      }
     } catch (error) {
       console.error('Error:', error);
     }
@@ -59,7 +62,7 @@ export default function Register() {
         />
       </Form.Group>
 
-      <Button as={Link} to={"/account"}variant="primary" type="submit" className="mb-3">
+      <Button variant="primary" type="submit" className="mb-3">
         Submit
       </Button>
 

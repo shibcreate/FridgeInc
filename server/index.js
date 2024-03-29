@@ -12,6 +12,10 @@ app.use(cors({
   origin: 'http://localhost:5173',
   credentials: true,
 }));
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  next();
+});
 app.use(cookieParser());
 
 // MongoDB connection
@@ -29,13 +33,15 @@ db.once('open', () => {
 });
 
 app.post('/register', (req, res) => {
-  const { email, password } = req.body;
+  const {name, email, password } = req.body;
   bcrypt.hash(password, 10).then((hash) => {
     UserModel.create({
+      name: name,
       email: email,
-      password: hash
-    }). then(() => {
+      password: hash,
+    }).then(() => {
       res.json("User registered");
+      console.log(name)
     }).catch((err) => {
       if (err) {
         res.status(400).json({error: err});
@@ -46,22 +52,29 @@ app.post('/register', (req, res) => {
 
 app.post('/login', async (req, res) => {
   const { email, password } = req.body;
-  const user = await UserModel.findOne({ email: email });
-      if (!user) 
-      res.status(401).json({error: "User is not registered"});
-      const hashedPassword = user.password;
-      bcrypt.compare(password, hashedPassword).then((match) => {
-        if (!match) {
-          res.status(400).json({error: "Wrong password"});
-        } else {
-          const accessToken = createToken(user);
-          res.cookie('access-token', accessToken, {
-            maxAge: 1296000000,
-            httpOnly: true,
-          });
-          res.json('Logged in');
-        }
-      });
+  try {
+    const user = await UserModel.findOne({ email: email });
+    if (!user) {
+      return res.status(401).json({error: "User is not registered"});
+    }
+    
+    const hashedPassword = user.password;
+    bcrypt.compare(password, hashedPassword).then((match) => {
+      if (!match) {
+        return res.status(400).json({error: "Wrong password"});
+      } else {
+        const accessToken = createToken(user);
+        res.cookie('access-token', accessToken, {
+          maxAge: 1296000000,
+          httpOnly: true,
+        });
+        return res.json('Logged in');
+      }
+    });
+  } catch (error) {
+    console.error('Error during login:', error);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
 });
 
 app.get('/profile', validateToken, (req, res) => {
