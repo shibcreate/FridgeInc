@@ -14,11 +14,11 @@ function RecipesList() {
     glutenFree: false,
     noEggs: false,
   });
-
-  // State variables to track likes and dislikes
+  const [email, setEmail] = useState('');
   const [likes, setLikes] = useState({});
-  const [dislikes, setDislikes] = useState({});
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // State to track login status
+  const [likedRecipes, setLikedRecipes] = useState([]);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [showLikesOnly, setShowLikesOnly] = useState(false); // New state for showLikesOnly
 
   useEffect(() => {
     const checkAuthentication = async () => {
@@ -34,31 +34,27 @@ function RecipesList() {
       }
     };
     checkAuthentication();
-  }, []); // Run only once when the component mounts
+  }, []);
 
   useEffect(() => {
     if (isLoggedIn) {
-      fetchRecipes(DEFAULT_QUERY); // Fetch recipes with default query if user is logged in
+      fetchRecipes(DEFAULT_QUERY);
     }
-  }, [isLoggedIn]); // Fetch recipes when login status changes
+  }, [isLoggedIn]);
 
   const fetchRecipes = async (query) => {
     try {
       const response = await axios.get(
         `https://api.edamam.com/search?q=${query}&app_id=${APP_ID}&app_key=${APP_KEY}`
       );
-      console.log('API response:', response.data); // Log the API response to inspect data
+      console.log('API response:', response.data);
       setRecipes(response.data.hits);
 
-      // Initialize likes and dislikes state objects for each recipe
       const initialLikes = {};
-      const initialDislikes = {};
       response.data.hits.forEach((recipe) => {
         initialLikes[recipe.recipe.uri] = 0;
-        initialDislikes[recipe.recipe.uri] = 0;
       });
       setLikes(initialLikes);
-      setDislikes(initialDislikes);
     } catch (error) {
       console.error('Error fetching recipes:', error);
     }
@@ -69,24 +65,21 @@ function RecipesList() {
   };
 
   const handleLike = (uri) => {
-    if (likes[uri] === 0 && dislikes[uri] === 0) {
-      setLikes({ ...likes, [uri]: 1 });
-      setDislikes({ ...dislikes, [uri]: 0 });
-    } else if (likes[uri] === 1) {
-      setLikes({ ...likes, [uri]: 0 });
-    }
-  };
+    setLikedRecipes((prevLikedRecipes) => {
+      if (prevLikedRecipes.includes(uri)) {
+        return prevLikedRecipes.filter((likedUri) => likedUri !== uri);
+      } else {
+        return [...prevLikedRecipes, uri];
+      }
+    });
 
-  const handleDislike = (uri) => {
-    if (dislikes[uri] === 0 && likes[uri] === 0) {
-      setDislikes({ ...dislikes, [uri]: 1 });
-      setLikes({ ...likes, [uri]: 0 });
-    } else if (dislikes[uri] === 1) {
-      setDislikes({ ...dislikes, [uri]: 0 });
-    }
+    setLikes({ ...likes, [uri]: likes[uri] === 0 ? 1 : 0 });
   };
 
   const filterRecipes = (recipe) => {
+    if (showLikesOnly && !likedRecipes.includes(recipe.recipe.uri)) {
+      return false; // Show only liked recipes if showLikesOnly is true
+    }
     if (filters.vegetarian && !recipe.recipe.healthLabels.includes('Vegetarian')) {
       return false;
     }
@@ -99,9 +92,30 @@ function RecipesList() {
     return true;
   };
 
+  const importPreferences = async () => {
+    try {
+      const response = await axios.post('http://localhost:3001/import-preferences', {
+        email,
+      });
+      console.log('Import preferences response:', response.data);
+  
+      setFilters({
+        vegetarian: response.data.dietPreference.includes(2),
+        glutenFree: response.data.dietPreference.includes(3),
+        noEggs: response.data.dietPreference.includes(1),
+      });
+  
+      fetchRecipes(DEFAULT_QUERY);
+  
+      setEmail('');
+    } catch (error) {
+      console.error('Error importing preferences:', error);
+    }
+  };
+  
+
   return (
     <div>
-      {/* Conditionally render content based on login status */}
       {isLoggedIn ? (
         <>
           <h1>Recommended Recipes</h1>
@@ -130,37 +144,52 @@ function RecipesList() {
               />
               No Eggs
             </label>
+            <div style={{ marginTop: '10px' }}>
+              <input
+                type="text"
+                placeholder="Enter email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+              <Button variant="primary" onClick={importPreferences} style={{ marginLeft: '10px' }}>
+                Import Preferences
+              </Button>
+            </div>
+          </div>
+          <div className="toggle-likes-button">
+            <Button variant="primary" onClick={() => setShowLikesOnly(!showLikesOnly)}>
+              {showLikesOnly ? 'Show All Recipes' : 'Show Likes Only'}
+            </Button>
           </div>
           <div className="recipe-grid">
             {recipes &&
-              recipes.filter(filterRecipes).map((recipe, index) => (
-                <Card key={index} style={{ width: '18rem' }}>
-                  <Card.Img variant="top" src={recipe.recipe.image} />
-                  <Card.Body>
-                    <h3 style={{ marginBottom: '10px', color: 'blue', fontFamily: 'Arial' }}>{recipe.recipe.label}</h3>
-                    <Card.Text style={{ fontSize: '14px', marginBottom: '15px' }}>
-                      <h4>Ingredients</h4>
-                      <ul>
-                        {recipe.recipe.ingredients &&
-                          recipe.recipe.ingredients.map((ingredient, index) => (
-                            <li key={index}>{ingredient.text}</li>
-                          ))}
-                      </ul>
-                    </Card.Text>
-                    <div className="button-group">
-                      <Button variant={likes[recipe.recipe.uri] === 1 ? 'success' : 'outline-success'} onClick={() => handleLike(recipe.recipe.uri)}>
-                        Like
-                      </Button>
-                      <Button variant={dislikes[recipe.recipe.uri] === 1 ? 'danger' : 'outline-danger'} onClick={() => handleDislike(recipe.recipe.uri)} style={{ marginLeft: '10px' }}>
-                        Dislike
-                      </Button>
-                      <Button variant="primary" href={recipe.recipe.url} target="_blank" rel="noopener noreferrer" style={{ marginTop: '10px', width: '100%' }}>
-                        View Preparation
-                      </Button>
-                    </div>
-                  </Card.Body>
-                </Card>
-              ))}
+              (showLikesOnly ? likedRecipes.map((uri) => recipes.find((recipe) => recipe.recipe.uri === uri)) : recipes)
+                .filter(filterRecipes)
+                .map((recipe, index) => (
+                  <Card key={index} style={{ width: '18rem' }}>
+                    <Card.Img variant="top" src={recipe.recipe.image} />
+                    <Card.Body>
+                      <h3 style={{ marginBottom: '10px', color: 'blue', fontFamily: 'Arial' }}>{recipe.recipe.label}</h3>
+                      <Card.Text style={{ fontSize: '14px', marginBottom: '15px' }}>
+                        <h4>Ingredients</h4>
+                        <ul>
+                          {recipe.recipe.ingredients &&
+                            recipe.recipe.ingredients.map((ingredient, index) => (
+                              <li key={index}>{ingredient.text}</li>
+                            ))}
+                        </ul>
+                      </Card.Text>
+                      <div className="button-group">
+                        <Button variant={likes[recipe.recipe.uri] === 1 ? 'success' : 'outline-success'} onClick={() => handleLike(recipe.recipe.uri)}>
+                          Like
+                        </Button>
+                        <Button variant="primary" href={recipe.recipe.url} target="_blank" rel="noopener noreferrer" style={{ marginTop: '10px', width: '100%' }}>
+                          View Preparation
+                        </Button>
+                      </div>
+                    </Card.Body>
+                  </Card>
+                ))}
           </div>
         </>
       ) : (
