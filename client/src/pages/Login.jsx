@@ -7,6 +7,7 @@ import Form from 'react-bootstrap/Form';
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -15,11 +16,9 @@ export default function Login() {
       const response = await axios.post('http://localhost:3001/login', {
         email,
         password,
-      }, {
-        withCredentials: true,
       });
       console.log(response);
-      if (response.status === 200) {
+      if (response.data === 'Success') {
         navigate('/profile');
       }
     } catch (error) {
@@ -42,19 +41,30 @@ export default function Login() {
         </Form.Text>
       </Form.Group>
 
-      <Form.Group className="mb-3" controlId="formBasicPassword">
+       <Form.Group className="mb-3" controlId="formBasicPassword">
         <Form.Label>Password</Form.Label>
-        <Form.Control
-          type="password"
-          placeholder="Password"
-          onChange={(e) => setPassword(e.target.value)}
-        />
+        <div className="password-input">
+          <Form.Control
+            type={showPassword ? "text" : "password"}
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <input
+            type="checkbox"
+            id="showPassword"
+            checked={showPassword}
+            style={{ marginRight: "5px" }}
+            onChange={() => setShowPassword(!showPassword)}
+          />
+          <label htmlFor="showPassword">Show Password</label>
+        </div>
       </Form.Group>
-
-      <Button variant="primary" type="submit" className="mb-3">
+     
+      <Button as={Link} to={"/account"}variant="primary" type="submit" className="mb-3">
         Submit
       </Button>
-
+     
       <Link to="/register" className="btn btn-default border w-100 bg-light rounded-0 text-decoration-none">
         Sign Up
       </Link>

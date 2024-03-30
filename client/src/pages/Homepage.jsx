@@ -10,14 +10,14 @@ export default function Homepage() {
     <Container>
       <Row>
         <Col sm={8}>
-          <Image style={{ width: '90%' }} src='./src/resources/banner.png' />
+          <Image style={{ width: '90%', marginTop: '30px' }} src='./src/resources/banner.png' /> 
         </Col>
         <Col sm={4}>
           <h2>Welcome to FrideInc</h2>
           <p>Find recipes within a snap!</p>
-          <p>Either finding a quick recipes or sharing your own, FridgeInc offers it all!</p> 
+          <p>Need to find a quick recipe or publish your own? FridgeInc offers it all!</p> 
           <Link to='/register'>
-            <Button style={{margin:'10px'}} variant="outline-dark">Join Community</Button>
+            <Button style={{margin:'10px'}} variant="outline-dark">Sign Up</Button>
           </Link>
           <Link to='/recipes'>
             <Button style={{margin:'10px'}} variant="outline-dark">Explore Recipes</Button>
