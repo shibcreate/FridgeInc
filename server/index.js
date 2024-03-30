@@ -73,13 +73,35 @@ app.post('/login', async (req, res) => {
   }
 });
 
+app.post('/save-diet-preference', async (req, res) => {
+  const { email, dietPreference } = req.body;
+
+  try {
+    // Update the user's diet preference in the database
+    const user = await UserModel.findOneAndUpdate(
+      { email: email },
+      { dietPreference: dietPreference },
+      { new: true }
+    );
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    return res.json({ message: 'Diet preference saved successfully' });
+  } catch (error) {
+    console.error('Error saving diet preference:', error);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 app.get('/profile', validateToken, (req, res) => {
   res.json('profile page')
 });
 
 app.get('/recipes', validateToken, (req, res) => {
   res.json('recipe list')
-})
+});
 
 app.listen(3001, () => {
   console.log("Server is running on port 3001");

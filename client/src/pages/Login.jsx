@@ -18,8 +18,8 @@ export default function Login() {
         password,
       });
       console.log(response);
-      if (response.data === 'Success') {
-        navigate('/profile');
+      if (response.data === 'Logged in') {
+        navigate('/account', { state: { email, name: response.data.name } });
       }
     } catch (error) {
       console.error('Error:', error);
@@ -41,7 +41,7 @@ export default function Login() {
         </Form.Text>
       </Form.Group>
 
-       <Form.Group className="mb-3" controlId="formBasicPassword">
+      <Form.Group className="mb-3" controlId="formBasicPassword">
         <Form.Label>Password</Form.Label>
         <div className="password-input">
           <Form.Control
@@ -61,7 +61,7 @@ export default function Login() {
         </div>
       </Form.Group>
      
-      <Button as={Link} to={"/account"}variant="primary" type="submit" className="mb-3">
+      <Button variant="primary" type="submit" className="mb-3">
         Submit
       </Button>
      
