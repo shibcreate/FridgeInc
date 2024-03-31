@@ -3,8 +3,8 @@ const mongoose = require('mongoose');
 const cors = require("cors");
 const UserModel = require("./models/Users");
 const bcrypt = require('bcrypt');
-const cookieParser = require('cookie-parser')
-const {createToken, validateToken} = require('./middleware/auth')
+const cookieParser = require('cookie-parser');
+const { createToken, validateToken } = require('./middleware/auth');
 
 const app = express();
 app.use(express.json());
@@ -27,9 +27,10 @@ db.on('error', (err) => {
 db.once('open', () => {
   console.log('Connected to MongoDB');
 });
+
 //ROUTES HANDLERS
 app.post('/register', (req, res) => {
-  const {name, email, password } = req.body;
+  const { name, email, password } = req.body;
   bcrypt.hash(password, 10).then((hash) => {
     UserModel.create({
       name: name,
@@ -40,7 +41,7 @@ app.post('/register', (req, res) => {
       console.log(name)
     }).catch((err) => {
       if (err) {
-        res.status(400).json({error: err});
+        res.status(400).json({ error: err });
       }
     });
   });
@@ -51,13 +52,13 @@ app.post('/login', async (req, res) => {
   try {
     const user = await UserModel.findOne({ email: email });
     if (!user) {
-      return res.status(401).json({error: "User is not registered"});
+      return res.status(401).json({ error: "User is not registered" });
     }
-    
+
     const hashedPassword = user.password;
     bcrypt.compare(password, hashedPassword).then((match) => {
       if (!match) {
-        return res.status(400).json({error: "Wrong password"});
+        return res.status(400).json({ error: "Wrong password" });
       } else {
         const accessToken = createToken(user);
         res.cookie('access-token', accessToken, {
@@ -95,12 +96,53 @@ app.post('/save-diet-preference', async (req, res) => {
   }
 });
 
+app.post('/upload-liked-recipes', async (req, res) => {
+  const { email, likedRecipes } = req.body;
+
+  try {
+    // Find the user by email and update the liked recipes in the database
+    const user = await UserModel.findOneAndUpdate(
+      { email: email },
+      { $addToSet: { likedRecipes: { $each: likedRecipes } } },
+      { new: true }
+    );
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    return res.json({ message: 'Liked recipes uploaded successfully' });
+  } catch (error) {
+    console.error('Error uploading liked recipes:', error);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
+app.post('/import-preferences', async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    // Find the user by email and retrieve the diet preference
+    const user = await UserModel.findOne({ email: email });
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    return res.json({ dietPreference: user.dietPreference });
+  } catch (error) {
+    console.error('Error importing preferences:', error);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 app.get('/profile', validateToken, (req, res) => {
-  res.json('profile page')
+  res.json('profile page');
 });
 
 app.get('/recipes', validateToken, (req, res) => {
-  res.json('recipe list')
+  res.json('recipe list');
 });
 
 app.listen(3001, () => {
