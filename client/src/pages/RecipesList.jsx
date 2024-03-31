@@ -124,6 +124,7 @@ function RecipesList() {
               <input
                 type="checkbox"
                 checked={filters.vegetarian}
+                style={{ marginRight: "5px" }}
                 onChange={() => handleFilterChange('vegetarian')}
               />
               Vegetarian
@@ -132,6 +133,7 @@ function RecipesList() {
               <input
                 type="checkbox"
                 checked={filters.glutenFree}
+                style={{ marginRight: "5px" }}
                 onChange={() => handleFilterChange('glutenFree')}
               />
               Gluten-Free
@@ -140,6 +142,7 @@ function RecipesList() {
               <input
                 type="checkbox"
                 checked={filters.noEggs}
+                style={{ marginRight: "5px" }}
                 onChange={() => handleFilterChange('noEggs')}
               />
               No Eggs

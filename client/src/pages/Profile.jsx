@@ -53,7 +53,7 @@ function Profile() {
     <div>
       {isLoggedIn ? ( // Render content only if the user is logged in
         <div>
-          <h1>Profile</h1>
+          <h1>Upload</h1><br></br>
           <h3>Snap a picture of your fridge</h3>
           <button onClick={handleImageUpload}>Upload Image</button>
           <input
