@@ -1,2 +1,5 @@
 .env
 /node_modules
+
+//hidden file fom MacOS
+.DS_Store
