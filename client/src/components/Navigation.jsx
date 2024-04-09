@@ -22,7 +22,7 @@ export default function Navigation() {
           </Navbar.Brand>
             <Nav.Link href="/">Home</Nav.Link>
             <Nav.Link href="/recipes">Recipes</Nav.Link>
-            <Nav.Link href="/profile">Profile
+            <Nav.Link href="/upload">Upload
             <div
               style={{
                 width: '20px',

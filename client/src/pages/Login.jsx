@@ -19,7 +19,7 @@ export default function Login() {
       });
       console.log(response);
       if (response.data === 'Logged in') {
-        navigate('/account', { state: { email, name: response.data.name } });
+        navigate('/profile', { state: { email, name: response.data.name } });
       }
     } catch (error) {
       console.error('Error:', error);
