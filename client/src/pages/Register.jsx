@@ -22,7 +22,7 @@ export default function Register() {
       });
       console.log(response);
       if (response.status === 200) {
-        navigate('/profile');
+        navigate('/upload');
       }
     } catch (error) {
       console.error('Error:', error);

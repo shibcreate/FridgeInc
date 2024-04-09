@@ -137,8 +137,8 @@ app.post('/import-preferences', async (req, res) => {
   }
 });
 
-app.get('/profile', validateToken, (req, res) => {
-  res.json('profile page');
+app.get('/upload', validateToken, (req, res) => {
+  res.json('upload page');
 });
 
 app.get('/recipes', validateToken, (req, res) => {
