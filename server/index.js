@@ -8,10 +8,20 @@ const { createToken, validateToken } = require('./middleware/auth');
 
 const app = express();
 app.use(express.json());
+//CORS config
 app.use(cors({
   origin: 'http://localhost:5173',
   credentials: true,
 }));
+//setHeaders
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:5173');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+  res.setHeader('Content-Type', 'application/json');
+  next();
+});
 app.use(cookieParser());
 
 // MongoDB connection

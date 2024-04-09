@@ -16,8 +16,9 @@ export default function Login() {
       const response = await axios.post('http://localhost:3001/login', {
         email,
         password,
+      }, {
+        withCredentials: true,
       });
-      console.log(response);
       if (response.data === 'Logged in') {
         navigate('/profile', { state: { email, name: response.data.name } });
       }
