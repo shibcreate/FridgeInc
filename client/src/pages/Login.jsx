@@ -32,6 +32,7 @@ export default function Login() {
       <Form.Group className="mb-3" controlId="formBasicEmail">
         <Form.Label>Email address</Form.Label>
         <Form.Control
+          required
           type="email"
           placeholder="Enter email"
           autoComplete="off"
@@ -46,6 +47,7 @@ export default function Login() {
         <Form.Label>Password</Form.Label>
         <div className="password-input">
           <Form.Control
+            required
             type={showPassword ? "text" : "password"}
             placeholder="Password"
             value={password}
