@@ -64,10 +64,15 @@ export default function Profile() {
           aria-label="Default select example"
           onChange={(e) => setDietPreference(e.target.value)}
         >
-          <option>Select Your Diet</option>
+          <option>No Preference</option>
           <option value="1">No-Eggs</option>
           <option value="2">Vegetarian</option>
           <option value="3">Gluten-Free</option>
+          <option value="4">Low-Fat</option>
+          <option value="5">High-Protein</option>
+          <option value="6">Vegan</option>
+          <option value="7">Nut-Free</option>
+          <option value="8">Low-Sodium</option>
         </Form.Select>
         {/* Other profile information */}
       </Card.Body>
