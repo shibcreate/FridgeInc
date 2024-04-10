@@ -2,8 +2,8 @@
 CMPE 131 Project
 
 # Project Description
-FridgeInc is focused on the growing interest in cooking at home because of its cost-saving results and its usefulness as a skill.
-FridgeInc will empower users to make easy, delicious meals at home with minimal waste and encourage budgetary and resourceful habits.
+**FridgeInc** is focused on the growing interest in cooking at home because of its cost-saving results and its usefulness as a skill.
+**FridgeInc** will empower users to make easy, delicious meals at home with minimal waste and encourage budgetary and resourceful habits.
 
 Users are able to create an account and log into the account. From there, they can browse the collection of reccipes and also share their own recipes.
 
