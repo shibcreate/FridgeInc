@@ -46,6 +46,7 @@ export default function Register() {
         <Form.Control
           required
           type="email"
+          pattern="[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$"
           placeholder="Enter email"
           onChange={(e) => setEmail(e.target.value)}
         />
@@ -59,9 +60,14 @@ export default function Register() {
         <Form.Control
           required
           type="password"
+          pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\!@*.]).{8,20}"
           placeholder="Password"
           onChange={(e) => setPassword(e.target.value)}
         />
+        <Form.Text id="passwordHelpBlock" muted>
+        Your password must be at least 8-20 characters long, contains at least one uppercase letter, 
+        one lowercase letter, one number, and one special characters (!, @, *, .)
+        </Form.Text>
       </Form.Group>
 
       <Button variant="primary" type="submit" className="mb-3">
