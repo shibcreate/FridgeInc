@@ -21,7 +21,8 @@ export default function Login() {
       });
       if (response.data === 'Logged in') {
         navigate('/profile', { state: { email, name: response.data.name } });
-      }
+      } else 
+        setErrorMessage('Incorrect email or password. Please try again.');
     } catch (error) {
       console.error('Error:', error);
     }
