@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 
-export default function Login() {
+export default function Login({setLoggedIn}) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -20,6 +20,7 @@ export default function Login() {
         withCredentials: true,
       });
       if (response.data === 'Logged in') {
+        setLoggedIn(true);
         navigate('/profile', { state: { email, name: response.data.name } });
       } else 
         setErrorMessage('Incorrect email or password. Please try again.');

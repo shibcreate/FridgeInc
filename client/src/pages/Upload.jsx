@@ -1,10 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 
-function Upload() {
+export default function Upload({isLoggedIn, setIsLoggedIn}) {
   const [image, setImage] = useState(null);
   const [roboflowData, setRoboflowData] = useState(null);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [finalIngredients, setFinalIngredients] = useState([]);
   const [newIngredientName, setNewIngredientName] = useState('');
   const [formattedIngredientsList, setFormattedIngredientsList] = useState('');
@@ -24,7 +23,7 @@ function Upload() {
       }
     };
     checkAuthentication();
-  }, []);
+  }, [isLoggedIn]);
 
   const handleImageUpload = () => {
     fileInputRef.current.click();
@@ -175,4 +174,3 @@ function Upload() {
   );
 }
 
-export default Upload;

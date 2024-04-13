@@ -1,16 +1,32 @@
-import { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import Card from 'react-bootstrap/Card';
 import Form from 'react-bootstrap/Form';
-import Button from 'react-bootstrap/Button';
+import axios from 'axios';
 
-export default function Profile() {
+export default function Profile({isLoggedIn, setIsLoggedIn}) {
   const location = useLocation();
   const { email, name } = location.state || {};
   const [dietPreference, setDietPreference] = useState('');
   const [profilePicture, setProfilePicture] = useState('');
   const [bio, setBio] = useState('');
-  
+
+  useEffect(() => {
+    const checkAuthentication = async () => {
+      try {
+        const response = await axios.get('http://localhost:3001/profile', {
+          withCredentials: true
+        });
+        if (response.status === 200) {
+          setIsLoggedIn(true);
+        }
+      } catch (error) {
+        setIsLoggedIn(false);
+      }
+    };
+    checkAuthentication();
+  }, [isLoggedIn]);
+
   const handleSaveChanges = async () => {
     try {
       const response = await fetch('http://localhost:3001/save-diet-preference', {
