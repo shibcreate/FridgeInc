@@ -39,7 +39,7 @@ Users are able to create an account and log into the account. From there, they c
 ### App (http://localhost:5173)
 | Path           | Component                | Purpose                                |
 | -------------- | ------------------------ | -------------------------------------- |
-| /              | `Home.js`                | Home page                              |
+| /              | `pages/Homepage.jsx`                | Home page                              |
 | /register      | `pages/Register.jsx`     | Form for creating a new user           |
 | /login         | `pages/Login.jsx`        | Form for logging in                    |
 | /upload        | `pages/Upload.jsx`       | Upload picture and show result         |
