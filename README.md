@@ -31,6 +31,10 @@ Users are able to create an account and log into the account. From there, they c
 | POST   | /import-preferences           | Get users' reference                      |
 | GET    | /upload                       | For users to upload their fridge pictures |
 | GET    | /recipes                      | Show recipes to users                     |
+| GET    | /                             | Show selected navigate button in homepage |
+| GET    | /profile                      | Store user info and reference             |
+| GET    | /share-recipe                 | For users to upload their recipes         |
+| GET    | /logout                       | Log user out                              |
 
 ### App (http://localhost:5173)
 | Path           | Component                | Purpose                                |
@@ -41,6 +45,7 @@ Users are able to create an account and log into the account. From there, they c
 | /upload        | `pages/Upload.jsx`       | Upload picture and show result         |
 | /profile       | `pages/Profile.jsx`      | User profile                           |
 | /recipes       | `pages/Recipes.jsx`      | List of recipes                        |
+| /share-recipe  | `pages/NewPost.jsx`      | Form for share custom recipes          |
 
 
 ### Frontend
