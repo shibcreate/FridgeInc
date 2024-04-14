@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 
-export default function Login() {
+export default function Login({setLoggedIn}) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -16,11 +16,14 @@ export default function Login() {
       const response = await axios.post('http://localhost:3001/login', {
         email,
         password,
+      }, {
+        withCredentials: true,
       });
-      console.log(response);
       if (response.data === 'Logged in') {
-        navigate('/account', { state: { email, name: response.data.name } });
-      }
+        setLoggedIn(true);
+        navigate('/profile', { state: { email, name: response.data.name } });
+      } else 
+        setErrorMessage('Incorrect email or password. Please try again.');
     } catch (error) {
       console.error('Error:', error);
     }
@@ -31,6 +34,7 @@ export default function Login() {
       <Form.Group className="mb-3" controlId="formBasicEmail">
         <Form.Label>Email address</Form.Label>
         <Form.Control
+          required
           type="email"
           placeholder="Enter email"
           autoComplete="off"
@@ -45,6 +49,7 @@ export default function Login() {
         <Form.Label>Password</Form.Label>
         <div className="password-input">
           <Form.Control
+            required
             type={showPassword ? "text" : "password"}
             placeholder="Password"
             value={password}

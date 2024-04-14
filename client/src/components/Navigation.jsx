@@ -7,24 +7,6 @@ import Button from 'react-bootstrap/Button'
 export default function Navigation() {
 
   return (
-<<<<<<< Updated upstream
-      <Navbar bg="light" data-bs-theme="light">
-        <Container fluid>
-          <Nav className="me-auto">
-          <Navbar.Brand href="/">
-            <img
-              alt="FridgeInc logo"
-              src="/src/resources/logo-demo.png"
-              width="50"
-              height="50"
-              className="d-inline-block align-top"
-            />{' '}
-            FridgeInc
-          </Navbar.Brand>
-            <Nav.Link href="/">Home</Nav.Link>
-            <Nav.Link href="/recipes">Recipes</Nav.Link>
-            <Nav.Link href="/profile">Profile
-=======
     <Navbar bg="light" expand="md" data-bs-theme="light">
       <Container fluid>
         <Navbar.Brand href="/">
@@ -45,7 +27,6 @@ export default function Navigation() {
           <Nav.Link href="/share-recipe">Post Recipes</Nav.Link>
 
           <Nav.Link href="/upload">Upload
->>>>>>> Stashed changes
             <div
               style={{
                 width: '20px',

@@ -22,7 +22,7 @@ export default function Register() {
       });
       console.log(response);
       if (response.status === 200) {
-        navigate('/profile');
+        navigate('/upload');
       }
     } catch (error) {
       console.error('Error:', error);
@@ -44,7 +44,10 @@ export default function Register() {
       <Form.Group className="mb-3" controlId="formBasicEmail">
         <Form.Label>Email address</Form.Label>
         <Form.Control
+          title='Example: john.doe@example.com'
+          required
           type="email"
+          pattern="[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$"
           placeholder="Enter email"
           onChange={(e) => setEmail(e.target.value)}
         />
@@ -56,10 +59,18 @@ export default function Register() {
       <Form.Group className="mb-3" controlId="formBasicPassword">
         <Form.Label>Password</Form.Label>
         <Form.Control
+          title='Make sure password is at least 8-20 characters long, have at least one uppercase letter, 
+        one lowercase letter, one number, and one special characters (!, @, *, .)'
+          required
           type="password"
+          pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\!@*.]).{8,20}"
           placeholder="Password"
           onChange={(e) => setPassword(e.target.value)}
         />
+        <Form.Text id="passwordHelpBlock" muted>
+          Your password is case sensitive, must be at least 8-20 characters long, contains at least one uppercase letter,
+          one lowercase letter, one number, and one special characters (!, @, *, .)
+        </Form.Text>
       </Form.Group>
 
       <Button variant="primary" type="submit" className="mb-3">

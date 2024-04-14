@@ -5,9 +5,9 @@ import Button from 'react-bootstrap/Button';
 
 const APP_ID = '67d82505';
 const APP_KEY = '6cc2264f11d4364c5dfdab7aab84538f';
-const DEFAULT_QUERY = 'rose, milk'; // Default search query
+const DEFAULT_QUERY = 'milk, egg, bacon, cheese, almond'; // Default search query
 
-function RecipesList() {
+export default function RecipesList({isLoggedIn, setIsLoggedIn}) {
   const [recipes, setRecipes] = useState([]);
   const [filters, setFilters] = useState({
     vegetarian: false,
@@ -17,7 +17,6 @@ function RecipesList() {
   const [email, setEmail] = useState('');
   const [likes, setLikes] = useState({});
   const [likedRecipes, setLikedRecipes] = useState([]);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showLikesOnly, setShowLikesOnly] = useState(false); // New state for showLikesOnly
 
   useEffect(() => {
@@ -34,7 +33,7 @@ function RecipesList() {
       }
     };
     checkAuthentication();
-  }, []);
+  }, [isLoggedIn]);
 
   useEffect(() => {
     if (isLoggedIn) {
@@ -80,13 +79,28 @@ function RecipesList() {
     if (showLikesOnly && !likedRecipes.includes(recipe.recipe.uri)) {
       return false; // Show only liked recipes if showLikesOnly is true
     }
+    if (filters.noEggs && recipe.recipe.ingredients.some((ingredient) => ingredient.text.toLowerCase().includes('egg'))) {
+      return false;
+    }
     if (filters.vegetarian && !recipe.recipe.healthLabels.includes('Vegetarian')) {
       return false;
     }
     if (filters.glutenFree && !recipe.recipe.healthLabels.includes('Gluten-Free')) {
       return false;
     }
-    if (filters.noEggs && recipe.recipe.ingredients.some((ingredient) => ingredient.text.toLowerCase().includes('egg'))) {
+    if (filters.lowFat && recipe.recipe.healthLabels.includes('Low-Fat')) {
+      return false;
+    }
+    if (filters.highProtein && recipe.recipe.healthLabels.includes('High-Protein')) {
+      return false;
+    }
+    if (filters.vegan && !recipe.recipe.healthLabels.includes('Vegan')) {
+      return false;
+    }
+    if (filters.nutFree && recipe.recipe.healthLabels.includes('Peanuts' || 'Tree-Nuts')) {
+      return false;
+    }
+    if (filters.lowSodium && recipe.recipe.healthLabels.includes('Low-Sodium')) {
       return false;
     }
     return true;
@@ -95,23 +109,29 @@ function RecipesList() {
   const importPreferences = async () => {
     try {
       const response = await axios.post('http://localhost:3001/import-preferences', {
-        email,
-      });
-      console.log('Import preferences response:', response.data);
-  
-      setFilters({
-        vegetarian: response.data.dietPreference.includes(2),
-        glutenFree: response.data.dietPreference.includes(3),
-        noEggs: response.data.dietPreference.includes(1),
-      });
-  
-      fetchRecipes(DEFAULT_QUERY);
-  
-      setEmail('');
-    } catch (error) {
-      console.error('Error importing preferences:', error);
-    }
-  };
+  email,
+});
+console.log('Import preferences response:', response.data);
+
+  setFilters({
+    noEggs: response.data.dietPreference.includes(1),
+    vegetarian: response.data.dietPreference.includes(2),
+    glutenFree: response.data.dietPreference.includes(3),
+    lowFat: response.data.dietPreference.includes(4),
+    highProtein: response.data.dietPreference.includes(5),
+    vegan: response.data.dietPreference.includes(6),
+    nutFree: response.data.dietPreference.includes(7),
+    lowSodium: response.data.dietPreference.includes(8),
+  });
+
+  fetchRecipes(DEFAULT_QUERY);
+
+  setEmail('');
+
+  } catch (error) {
+    console.error('Error importing preferences:', error);
+  }
+};
   
 
   return (
@@ -125,24 +145,64 @@ function RecipesList() {
                 type="checkbox"
                 checked={filters.vegetarian}
                 onChange={() => handleFilterChange('vegetarian')}
-              />
-              Vegetarian
+            />
+            Vegetarian
             </label>
             <label className="filter-label">
-              <input
-                type="checkbox"
-                checked={filters.glutenFree}
-                onChange={() => handleFilterChange('glutenFree')}
-              />
-              Gluten-Free
+            <input
+              type="checkbox"
+              checked={filters.glutenFree}
+              onChange={() => handleFilterChange('glutenFree')}
+            />
+            Gluten-Free
             </label>
             <label className="filter-label">
-              <input
-                type="checkbox"
-                checked={filters.noEggs}
-                onChange={() => handleFilterChange('noEggs')}
-              />
-              No Eggs
+            <input
+              type="checkbox"
+              checked={filters.noEggs}
+              onChange={() => handleFilterChange('noEggs')}
+            />
+            No Eggs
+            </label>
+            <label className="filter-label">
+            <input
+              type="checkbox"
+              checked={filters.lowFat}
+              onChange={() => handleFilterChange('lowFat')}
+            />
+            Low-Fat
+            </label>
+            <label className="filter-label">
+            <input
+              type="checkbox"
+              checked={filters.highProtein}
+              onChange={() => handleFilterChange('highProtein')}
+            />
+            High-Protein
+            </label>
+            <label className="filter-label">
+            <input
+              type="checkbox"
+              checked={filters.vegan}
+              onChange={() => handleFilterChange('vegan')}
+            />
+            Vegan
+            </label>
+            <label className="filter-label">
+            <input
+              type="checkbox"
+              checked={filters.nutFree}
+              onChange={() => handleFilterChange('nutFree')}
+            />
+            Nut-Free
+            </label>
+            <label className="filter-label">
+            <input
+              type="checkbox"
+              checked={filters.lowSodium}
+              onChange={() => handleFilterChange('lowSodium')}
+            />
+            Low-Sodium
             </label>
             <div style={{ marginTop: '10px' }}>
               <input
@@ -198,5 +258,3 @@ function RecipesList() {
     </div>
   );
 }
-
-export default RecipesList;

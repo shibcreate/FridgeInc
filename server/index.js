@@ -9,10 +9,20 @@ const { createToken, validateToken } = require('./middleware/auth');
 
 const app = express();
 app.use(express.json());
+//CORS config
 app.use(cors({
   origin: 'http://localhost:5173',
   credentials: true,
 }));
+//setHeaders
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:5173');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+  res.setHeader('Content-Type', 'application/json');
+  next();
+});
 app.use(cookieParser());
 
 // MongoDB connection
@@ -161,13 +171,30 @@ app.post('/import-preferences', async (req, res) => {
   }
 });
 
-app.get('/profile', validateToken, (req, res) => {
-  res.json('profile page');
+app.get('/upload', validateToken, (req, res) => {
+  res.json('upload page');
 });
 
 app.get('/recipes', validateToken, (req, res) => {
   res.json('recipe list');
 });
+
+app.get('/', validateToken, (req, res) => {
+  res.json('homepage')
+});
+
+app.get('/profile', validateToken, (req, res) => {
+  res.json('profile page')
+});
+
+app.get('/share-recipe', validateToken, (req, res) => {
+  res.json('custom recipe page')
+});
+
+app.get('/logout', async (req, res) => {
+  res.status(202).clearCookie('access-token').send('cookie cleared')
+});
+
 
 app.listen(3001, () => {
   console.log("Server is running on port 3001");

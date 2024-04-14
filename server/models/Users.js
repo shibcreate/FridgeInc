@@ -6,8 +6,8 @@ const UserSchema = new mongoose.Schema({
   password: String,
   dietPreference: {
     type: String,
-    enum: ['No-Eggs', 'Vegetarian', 'Gluten-Free'], // Define the allowed diet preferences
-    default: 'No-Eggs', // Set a default value if not specified
+    enum: ['No-Eggs', 'Vegetarian', 'Gluten-Free', 'Low-Fat', 'High-Protein', 'Vegan', 'Nut-Free', 'Low-Sodium'], // Define the allowed diet preferences
+    default: 'Vegetarian', // Set a default value if not specified
   },
 });
 
