@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 
-export default function Upload({isLoggedIn, setIsLoggedIn}) {
+export default function Upload({ isLoggedIn, setIsLoggedIn }) {
   const [image, setImage] = useState(null);
   const [roboflowData, setRoboflowData] = useState(null);
   const [finalIngredients, setFinalIngredients] = useState([]);
@@ -13,7 +13,7 @@ export default function Upload({isLoggedIn, setIsLoggedIn}) {
     const checkAuthentication = async () => {
       try {
         const response = await axios.get('http://localhost:3001/upload', {
-          withCredentials: true
+          withCredentials: true,
         });
         if (response.data === 'upload page') {
           setIsLoggedIn(true);
@@ -38,23 +38,24 @@ export default function Upload({isLoggedIn, setIsLoggedIn}) {
 
       try {
         const response = await axios({
-          method: "POST",
-          url: "https://detect.roboflow.com/aicook-lcv4d/3",
+          method: 'POST',
+          url: 'https://detect.roboflow.com/aicook-lcv4d/3',
           params: {
-            api_key: "t37wtQdpUC2586fdcs4t"
+            api_key: 't37wtQdpUC2586fdcs4t',
           },
           data: imageData.split(',')[1],
           headers: {
-            "Content-Type": "application/x-www-form-urlencoded"
-          }
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
         });
         setRoboflowData(response.data);
         setImage(imageData);
-        // Set initial final ingredients based on detected ingredients
-        setFinalIngredients(response.data.predictions.map((prediction) => ({
-          name: prediction.class.replace(/_/g, ' '),
-          confidence: prediction.confidence
-        })));
+        setFinalIngredients(
+          response.data.predictions.map((prediction) => ({
+            name: prediction.class.replace(/_/g, ' '),
+            confidence: prediction.confidence,
+          }))
+        );
       } catch (error) {
         console.log(error.message);
       }
@@ -82,22 +83,19 @@ export default function Upload({isLoggedIn, setIsLoggedIn}) {
         ...finalIngredients,
         {
           name: newIngredientName,
-          confidence: 1.00 // 100%
-        }
+          confidence: 1.0, // 100%
+        },
       ]);
       setNewIngredientName('');
     }
   };
 
   const handleSubmitFinalIngredients = () => {
-    // Create a new array without duplicates and without CI information
-    const uniqueIngredients = Array.from(new Set(finalIngredients.map(ingredient => ingredient.name)));
-
-    // Create a string with comma-separated items
+    const uniqueIngredients = Array.from(new Set(finalIngredients.map((ingredient) => ingredient.name)));
     const formattedIngredients = uniqueIngredients.join(', ');
-
-    // Update the state with the formatted ingredients
     setFormattedIngredientsList(formattedIngredients);
+    localStorage.setItem('formattedIngredients', formattedIngredients);
+    console.log('Final ingredients successfully submitted to local storage:', formattedIngredients);
   };
 
   const formatPercentage = (value) => {
@@ -115,7 +113,9 @@ export default function Upload({isLoggedIn, setIsLoggedIn}) {
               <button onClick={handleRemoveImage}>Remove Image</button>
             )}
             {roboflowData && (
-              <button onClick={handleSubmitFinalIngredients}>Submit Final Ingredients</button>
+              <button onClick={handleSubmitFinalIngredients}>
+                Submit Final Ingredients
+              </button>
             )}
           </div>
           <input
@@ -160,12 +160,6 @@ export default function Upload({isLoggedIn, setIsLoggedIn}) {
               </div>
             </div>
           )}
-          {formattedIngredientsList && (
-            <div>
-              <h3>Formatted Ingredients:</h3>
-              <p>{formattedIngredientsList}</p>
-            </div>
-          )}
         </div>
       ) : (
         <p>Please log in to view this page.</p>
@@ -173,4 +167,3 @@ export default function Upload({isLoggedIn, setIsLoggedIn}) {
     </div>
   );
 }
-

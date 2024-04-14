@@ -5,7 +5,7 @@ import Button from 'react-bootstrap/Button';
 
 const APP_ID = '67d82505';
 const APP_KEY = '6cc2264f11d4364c5dfdab7aab84538f';
-const DEFAULT_QUERY = 'milk, egg, bacon, cheese, almond'; // Default search query
+const DEFAULT_QUERY = 'popular'; // Default search query
 
 export default function RecipesList({isLoggedIn, setIsLoggedIn}) {
   const [recipes, setRecipes] = useState([]);
@@ -37,7 +37,8 @@ export default function RecipesList({isLoggedIn, setIsLoggedIn}) {
 
   useEffect(() => {
     if (isLoggedIn) {
-      fetchRecipes(DEFAULT_QUERY);
+      const storedDefaultQuery = localStorage.getItem('formattedIngredients');
+      fetchRecipes(storedDefaultQuery ? storedDefaultQuery : DEFAULT_QUERY);
     }
   }, [isLoggedIn]);
 
@@ -109,30 +110,30 @@ export default function RecipesList({isLoggedIn, setIsLoggedIn}) {
   const importPreferences = async () => {
     try {
       const response = await axios.post('http://localhost:3001/import-preferences', {
-  email,
-});
-console.log('Import preferences response:', response.data);
-
-  setFilters({
-    noEggs: response.data.dietPreference.includes(1),
-    vegetarian: response.data.dietPreference.includes(2),
-    glutenFree: response.data.dietPreference.includes(3),
-    lowFat: response.data.dietPreference.includes(4),
-    highProtein: response.data.dietPreference.includes(5),
-    vegan: response.data.dietPreference.includes(6),
-    nutFree: response.data.dietPreference.includes(7),
-    lowSodium: response.data.dietPreference.includes(8),
-  });
-
-  fetchRecipes(DEFAULT_QUERY);
-
-  setEmail('');
-
-  } catch (error) {
-    console.error('Error importing preferences:', error);
-  }
-};
+        email,
+      });
+      console.log('Import preferences response:', response.data);
   
+      setFilters({
+        noEggs: response.data.dietPreference.includes(1),
+        vegetarian: response.data.dietPreference.includes(2),
+        glutenFree: response.data.dietPreference.includes(3),
+        lowFat: response.data.dietPreference.includes(4),
+        highProtein: response.data.dietPreference.includes(5),
+        vegan: response.data.dietPreference.includes(6),
+        nutFree: response.data.dietPreference.includes(7),
+        lowSodium: response.data.dietPreference.includes(8),
+      });
+  
+      const storedDefaultQuery = localStorage.getItem('formattedIngredients');
+      fetchRecipes(storedDefaultQuery ? storedDefaultQuery : DEFAULT_QUERY);
+  
+      setEmail('');
+  
+    } catch (error) {
+      console.error('Error importing preferences:', error);
+    }
+  };  
 
   return (
     <div>
