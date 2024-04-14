@@ -2,6 +2,7 @@ const express = require("express");
 const mongoose = require('mongoose');
 const cors = require("cors");
 const UserModel = require("./models/Users");
+const CustomModel = require("./models/CustomRecipes");
 const bcrypt = require('bcrypt');
 const cookieParser = require('cookie-parser');
 const { createToken, validateToken } = require('./middleware/auth');
@@ -84,6 +85,28 @@ app.post('/login', async (req, res) => {
   }
 });
 
+
+app.post('/upload-custom-recipes', async (req, res) => {
+  const { name, email, recipeName, ingredients, recipeText } = req.body;
+
+  try {
+    const customRecs = await CustomModel.create({
+      name: name, // connect the custom recipe to the user by username?
+      email: email,
+      recipeName: recipeName,
+      ingredients: ingredients,
+      recipeText: recipeText,
+    });
+
+    return res.json({ message: 'Custom recipe saved successfully' });
+  } 
+  catch (error) {
+    console.error('Error saving custom recipe:', error);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
 app.post('/save-diet-preference', async (req, res) => {
   const { email, dietPreference } = req.body;
 
@@ -105,6 +128,7 @@ app.post('/save-diet-preference', async (req, res) => {
     return res.status(500).json({ error: 'Internal server error' });
   }
 });
+
 
 app.post('/upload-liked-recipes', async (req, res) => {
   const { email, likedRecipes } = req.body;

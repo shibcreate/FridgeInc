@@ -1,12 +1,11 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
-import Button from 'react-bootstrap/Button';
-import Logout from '../pages/Logout';
+import {Link} from 'react-router-dom'
+import Button from 'react-bootstrap/Button'
 
-export default function Navigation({ isLoggedIn, handleLogout }) {
+export default function Navigation() {
+
   return (
     <Navbar bg="light" expand="md" data-bs-theme="light">
       <Container fluid>
@@ -22,7 +21,11 @@ export default function Navigation({ isLoggedIn, handleLogout }) {
         </Navbar.Brand>
         <Nav className="me-auto">
           <Nav.Link href="/">Home</Nav.Link>
+
           <Nav.Link href="/recipes">Recipes</Nav.Link>
+
+          <Nav.Link href="/share-recipe">Post Recipes</Nav.Link>
+
           <Nav.Link href="/upload">Upload
             <div
               style={{
@@ -34,22 +37,12 @@ export default function Navigation({ isLoggedIn, handleLogout }) {
                 marginLeft: '5px',
               }}
             ></div>
-          </Nav.Link>
-          {isLoggedIn && (
-            <>
-              <Link to='/share-recipe' className="ml-auto">
-                <Button variant="outline-primary">Share</Button>
-              </Link>
-              <Logout handleLogout={handleLogout} />
-            </>
-          )}
-        </Nav>
-        {!isLoggedIn && (
-          <Link to='/login' className="ml-auto">
-            <Button variant="outline-success">Log In</Button>
+            </Nav.Link>      
+          </Nav>
+          <Link to='/login'>
+          <Button variant="outline-success">Log In</Button>
           </Link>
-        )}
-      </Container>
-    </Navbar>
+        </Container>
+      </Navbar>
   );
 }
