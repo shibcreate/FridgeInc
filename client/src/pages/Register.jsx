@@ -8,6 +8,7 @@ export default function Register() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -27,6 +28,10 @@ export default function Register() {
     } catch (error) {
       console.error('Error:', error);
     }
+  };
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
   };
 
   return (
@@ -58,15 +63,24 @@ export default function Register() {
 
       <Form.Group className="mb-3" controlId="formBasicPassword">
         <Form.Label>Password</Form.Label>
-        <Form.Control
-          title='Make sure password is at least 8-20 characters long, have at least one uppercase letter, 
-        one lowercase letter, one number, and one special characters (!, @, *, .)'
-          required
-          type="password"
-          pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\!@*.]).{8,20}"
-          placeholder="Password"
-          onChange={(e) => setPassword(e.target.value)}
-        />
+        <div className="password-input d-flex align-items-center">
+          <Form.Control
+            required
+            type={showPassword ? "text" : "password"} 
+            pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\!@*.]).{8,20}"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <Button
+            variant="light"
+            className="password-toggle"
+            onClick={togglePasswordVisibility} 
+            aria-label={showPassword ? "Hide password" : "Show password"}
+          >
+            {showPassword ? "Hide" : "Show"} 
+          </Button>
+        </div>
         <Form.Text id="passwordHelpBlock" muted>
           Your password is case sensitive, must be at least 8-20 characters long, contains at least one uppercase letter,
           one lowercase letter, one number, and one special characters (!, @, *, .)

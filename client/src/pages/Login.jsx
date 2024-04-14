@@ -36,6 +36,7 @@ export default function Login({setLoggedIn}) {
         <Form.Control
           required
           type="email"
+          pattern="[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$"
           placeholder="Enter email"
           autoComplete="off"
           onChange={(e) => setEmail(e.target.value)}
@@ -50,6 +51,7 @@ export default function Login({setLoggedIn}) {
         <div className="password-input">
           <Form.Control
             required
+            pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\!@*.]).{8,20}"
             type={showPassword ? "text" : "password"}
             placeholder="Password"
             value={password}
