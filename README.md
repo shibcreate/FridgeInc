@@ -33,7 +33,8 @@ Users are able to create an account and log into the account. From there, they c
 | GET    | /recipes                      | Show recipes to users                     |
 | GET    | /                             | Show selected navigate button in homepage |
 | GET    | /profile                      | Store user info and reference             |
-| POST   | /upload-custom-recipes        | For users to upload their recipes         |
+| GET    | /share-recipe                 | For users to upload their recipes         |
+| POST   | /upload-custom-recipes        | Store users' shared recipes               |
 | GET    | /logout                       | Log user out                              |
 
 ### App (http://localhost:5173)
