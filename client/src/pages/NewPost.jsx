@@ -38,7 +38,7 @@ export default function NewPost({ isLoggedIn, setIsLoggedIn }) {
                     <Form.Group className="mb-3">
                         <Form.Label>Ingredients</Form.Label>
                         <Form.Control
-                            required
+                            as="textarea" rows={3}
                             placeholder="Ingredients"
                         />
                     </Form.Group>
