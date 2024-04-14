@@ -3,8 +3,9 @@ import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import {Link} from 'react-router-dom'
 import Button from 'react-bootstrap/Button'
+import Logout from '../pages/Logout';
 
-export default function Navigation() {
+export default function Navigation({ isLoggedIn, handleLogout }) {
 
   return (
     <Navbar bg="light" expand="md" data-bs-theme="light">
@@ -24,8 +25,6 @@ export default function Navigation() {
 
           <Nav.Link href="/recipes">Recipes</Nav.Link>
 
-          <Nav.Link href="/share-recipe">Post Recipes</Nav.Link>
-
           <Nav.Link href="/upload">Upload
             <div
               style={{
@@ -38,11 +37,21 @@ export default function Navigation() {
               }}
             ></div>
             </Nav.Link>      
-          </Nav>
-          <Link to='/login'>
-          <Button variant="outline-success">Log In</Button>
+            {isLoggedIn && (
+            <>
+              <Link to='/share-recipe' className="ml-auto">
+                <Button variant="outline-primary">Share</Button>
+              </Link>
+              <Logout handleLogout={handleLogout} />
+            </>
+          )}
+        </Nav>
+        {!isLoggedIn && (
+          <Link to='/login' className="ml-auto">
+            <Button variant="outline-success">Log In</Button>
           </Link>
-        </Container>
-      </Navbar>
+        )}
+      </Container>
+    </Navbar>
   );
 }
