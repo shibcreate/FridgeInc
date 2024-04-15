@@ -18,6 +18,7 @@ export default function RecipesList({isLoggedIn, setIsLoggedIn}) {
   const [likes, setLikes] = useState({});
   const [likedRecipes, setLikedRecipes] = useState([]);
   const [showLikesOnly, setShowLikesOnly] = useState(false); // New state for showLikesOnly
+  
 
   useEffect(() => {
     const checkAuthentication = async () => {
@@ -139,6 +140,7 @@ export default function RecipesList({isLoggedIn, setIsLoggedIn}) {
     <div>
       {isLoggedIn ? (
         <>
+          <h2>Found {recipes.length} recipe(s)</h2>
           <h1>Recommended Recipes</h1>
           <div className="filter-options">
             <label className="filter-label">
