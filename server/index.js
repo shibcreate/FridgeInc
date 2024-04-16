@@ -175,7 +175,7 @@ app.get('/upload', validateToken, (req, res) => {
   res.json('upload page');
 });
 
-app.get('/recipes', validateToken, (req, res) => {
+app.get('/recipes', (req, res) => {
   res.json('recipe list');
 });
 

@@ -7,7 +7,7 @@ const APP_ID = '67d82505';
 const APP_KEY = '6cc2264f11d4364c5dfdab7aab84538f';
 const DEFAULT_QUERY = 'popular'; // Default search query
 
-export default function RecipesList({isLoggedIn, setIsLoggedIn}) {
+export default function RecipesList() {
   const [recipes, setRecipes] = useState([]);
   const [filters, setFilters] = useState({
     vegetarian: false,
@@ -18,8 +18,9 @@ export default function RecipesList({isLoggedIn, setIsLoggedIn}) {
   const [likes, setLikes] = useState({});
   const [likedRecipes, setLikedRecipes] = useState([]);
   const [showLikesOnly, setShowLikesOnly] = useState(false); // New state for showLikesOnly
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userQuery, setUserQuery] = useState('');
-  
+
 
   useEffect(() => {
     const checkAuthentication = async () => {
@@ -29,13 +30,15 @@ export default function RecipesList({isLoggedIn, setIsLoggedIn}) {
         });
         if (response.data === 'recipe list') {
           setIsLoggedIn(true);
+          console.log('Recipes page access successfully!')
         }
       } catch (error) {
         setIsLoggedIn(false);
+        console.log('Failted to access recipes page!')
       }
     };
     checkAuthentication();
-  }, [isLoggedIn]);
+  }, []);
 
   useEffect(() => {
     if (isLoggedIn) {
@@ -115,7 +118,7 @@ export default function RecipesList({isLoggedIn, setIsLoggedIn}) {
         email,
       });
       console.log('Import preferences response:', response.data);
-  
+
       setFilters({
         noEggs: response.data.dietPreference.includes(1),
         vegetarian: response.data.dietPreference.includes(2),
@@ -126,148 +129,143 @@ export default function RecipesList({isLoggedIn, setIsLoggedIn}) {
         nutFree: response.data.dietPreference.includes(7),
         lowSodium: response.data.dietPreference.includes(8),
       });
-  
+
       const storedDefaultQuery = localStorage.getItem('formattedIngredients');
       fetchRecipes(storedDefaultQuery ? storedDefaultQuery : DEFAULT_QUERY);
-  
+
       setEmail('');
-  
+
     } catch (error) {
       console.error('Error importing preferences:', error);
     }
-  };  
+  };
 
   return (
     <div>
-      {isLoggedIn ? (
-        <>
-          <h2>Found {recipes.length} recipe(s)</h2>
-          <h1>Recommended Recipes</h1>
-          <div className="user-query">
+      <h2>Found {recipes.length} recipe(s)</h2>
+      <h1>Recommended Recipes</h1>
+      <div className="user-query">
+        <input
+          type="text"
+          value={userQuery}
+          onChange={(e) => setUserQuery(e.target.value)}
+          placeholder="Enter your query"
+        />
+        <button onClick={() => fetchRecipes(userQuery)}>Search</button>
+      </div>
+      <div className="filter-options">
+        <label className="filter-label">
+          <input
+            type="checkbox"
+            checked={filters.vegetarian}
+            onChange={() => handleFilterChange('vegetarian')}
+          />
+          Vegetarian
+        </label>
+        <label className="filter-label">
+          <input
+            type="checkbox"
+            checked={filters.glutenFree}
+            onChange={() => handleFilterChange('glutenFree')}
+          />
+          Gluten-Free
+        </label>
+        <label className="filter-label">
+          <input
+            type="checkbox"
+            checked={filters.noEggs}
+            onChange={() => handleFilterChange('noEggs')}
+          />
+          No Eggs
+        </label>
+        <label className="filter-label">
+          <input
+            type="checkbox"
+            checked={filters.lowFat}
+            onChange={() => handleFilterChange('lowFat')}
+          />
+          Low-Fat
+        </label>
+        <label className="filter-label">
+          <input
+            type="checkbox"
+            checked={filters.highProtein}
+            onChange={() => handleFilterChange('highProtein')}
+          />
+          High-Protein
+        </label>
+        <label className="filter-label">
+          <input
+            type="checkbox"
+            checked={filters.vegan}
+            onChange={() => handleFilterChange('vegan')}
+          />
+          Vegan
+        </label>
+        <label className="filter-label">
+          <input
+            type="checkbox"
+            checked={filters.nutFree}
+            onChange={() => handleFilterChange('nutFree')}
+          />
+          Nut-Free
+        </label>
+        <label className="filter-label">
+          <input
+            type="checkbox"
+            checked={filters.lowSodium}
+            onChange={() => handleFilterChange('lowSodium')}
+          />
+          Low-Sodium
+        </label>
+        <div style={{ marginTop: '10px' }}>
           <input
             type="text"
-            value={userQuery}
-            onChange={(e) => setUserQuery(e.target.value)}
-            placeholder="Enter your query"
+            placeholder="Enter email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
           />
-            <button onClick={() => fetchRecipes(userQuery)}>Search</button>
-    </div>
-          <div className="filter-options">
-            <label className="filter-label">
-              <input
-                type="checkbox"
-                checked={filters.vegetarian}
-                onChange={() => handleFilterChange('vegetarian')}
-            />
-            Vegetarian
-            </label>
-            <label className="filter-label">
-            <input
-              type="checkbox"
-              checked={filters.glutenFree}
-              onChange={() => handleFilterChange('glutenFree')}
-            />
-            Gluten-Free
-            </label>
-            <label className="filter-label">
-            <input
-              type="checkbox"
-              checked={filters.noEggs}
-              onChange={() => handleFilterChange('noEggs')}
-            />
-            No Eggs
-            </label>
-            <label className="filter-label">
-            <input
-              type="checkbox"
-              checked={filters.lowFat}
-              onChange={() => handleFilterChange('lowFat')}
-            />
-            Low-Fat
-            </label>
-            <label className="filter-label">
-            <input
-              type="checkbox"
-              checked={filters.highProtein}
-              onChange={() => handleFilterChange('highProtein')}
-            />
-            High-Protein
-            </label>
-            <label className="filter-label">
-            <input
-              type="checkbox"
-              checked={filters.vegan}
-              onChange={() => handleFilterChange('vegan')}
-            />
-            Vegan
-            </label>
-            <label className="filter-label">
-            <input
-              type="checkbox"
-              checked={filters.nutFree}
-              onChange={() => handleFilterChange('nutFree')}
-            />
-            Nut-Free
-            </label>
-            <label className="filter-label">
-            <input
-              type="checkbox"
-              checked={filters.lowSodium}
-              onChange={() => handleFilterChange('lowSodium')}
-            />
-            Low-Sodium
-            </label>
-            <div style={{ marginTop: '10px' }}>
-              <input
-                type="text"
-                placeholder="Enter email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-              <Button variant="primary" onClick={importPreferences} style={{ marginLeft: '10px' }}>
-                Import Preferences
-              </Button>
-            </div>
-          </div>
-          <div className="toggle-likes-button">
-            <Button variant="primary" onClick={() => setShowLikesOnly(!showLikesOnly)}>
-              {showLikesOnly ? 'Show All Recipes' : 'Show Likes Only'}
-            </Button>
-          </div>
-          <div className="recipe-grid">
-            {recipes &&
-              (showLikesOnly ? likedRecipes.map((uri) => recipes.find((recipe) => recipe.recipe.uri === uri)) : recipes)
-                .filter(filterRecipes)
-                .map((recipe, index) => (
-                  <Card key={index} style={{ width: '18rem' }}>
-                    <Card.Img variant="top" src={recipe.recipe.image} />
-                    <Card.Body>
-                      <h3 style={{ marginBottom: '10px', color: 'blue', fontFamily: 'Arial' }}>{recipe.recipe.label}</h3>
-                      <Card.Text style={{ fontSize: '14px', marginBottom: '15px' }}>
-                        <h4>Ingredients</h4>
-                        <ul>
-                          {recipe.recipe.ingredients &&
-                            recipe.recipe.ingredients.map((ingredient, index) => (
-                              <li key={index}>{ingredient.text}</li>
-                            ))}
-                        </ul>
-                      </Card.Text>
-                      <div className="button-group">
-                        <Button variant={likes[recipe.recipe.uri] === 1 ? 'success' : 'outline-success'} onClick={() => handleLike(recipe.recipe.uri)}>
-                          Like
-                        </Button>
-                        <Button variant="primary" href={recipe.recipe.url} target="_blank" rel="noopener noreferrer" style={{ marginTop: '10px', width: '100%' }}>
-                          View Preparation
-                        </Button>
-                      </div>
-                    </Card.Body>
-                  </Card>
-                ))}
-          </div>
-        </>
-      ) : (
-        <p>Please log in to view recipes</p>
-      )}
+          <Button variant="primary" onClick={importPreferences} style={{ marginLeft: '10px' }}>
+            Import Preferences
+          </Button>
+        </div>
+      </div>
+      <div className="toggle-likes-button">
+        <Button variant="primary" onClick={() => setShowLikesOnly(!showLikesOnly)}>
+          {showLikesOnly ? 'Show All Recipes' : 'Show Likes Only'}
+        </Button>
+      </div>
+      <div className="recipe-grid">
+        {recipes &&
+          (showLikesOnly ? likedRecipes.map((uri) => recipes.find((recipe) => recipe.recipe.uri === uri)) : recipes)
+            .filter(filterRecipes)
+            .map((recipe, index) => (
+              <Card key={index} style={{ width: '18rem', display: 'flex', flexDirection: 'column' }}>
+              <Card.Img variant="top" src={recipe.recipe.image} />
+              <Card.Body style={{ flexGrow: 1 }}>
+                <h3 style={{ marginBottom: '10px', color: 'blue', fontFamily: 'Arial' }}>{recipe.recipe.label}</h3>
+                <Card.Text style={{ fontSize: '14px', marginBottom: '15px', flexGrow: 1 }}>
+                  <h4>Ingredients</h4>
+                  <ul style={{ listStyle: 'none', padding: 0 }}>
+                    {recipe.recipe.ingredients &&
+                      recipe.recipe.ingredients.map((ingredient, index) => (
+                        <li key={index}>{ingredient.text}</li>
+                      ))}
+                  </ul>
+                </Card.Text>
+              </Card.Body>
+              <div className="button-group" style={{ marginTop: 'auto', marginBottom: '30px', textAlign: 'center' }}>
+                <Button variant={likes[recipe.recipe.uri] === 1 ? 'success' : 'outline-success'} onClick={() => handleLike(recipe.recipe.uri)}>
+                  Like
+                </Button>
+                <Button variant="primary" href={recipe.recipe.url} target="_blank" rel="noopener noreferrer" style={{ marginTop: '10px', width: '100%' }}>
+                  View Preparation
+                </Button>
+              </div>
+            </Card>
+            
+            ))}
+      </div>
     </div>
   );
 }
