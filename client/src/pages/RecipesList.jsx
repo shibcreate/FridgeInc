@@ -18,6 +18,7 @@ export default function RecipesList({isLoggedIn, setIsLoggedIn}) {
   const [likes, setLikes] = useState({});
   const [likedRecipes, setLikedRecipes] = useState([]);
   const [showLikesOnly, setShowLikesOnly] = useState(false); // New state for showLikesOnly
+  const [userQuery, setUserQuery] = useState('');
   
 
   useEffect(() => {
@@ -142,6 +143,15 @@ export default function RecipesList({isLoggedIn, setIsLoggedIn}) {
         <>
           <h2>Found {recipes.length} recipe(s)</h2>
           <h1>Recommended Recipes</h1>
+          <div className="user-query">
+          <input
+            type="text"
+            value={userQuery}
+            onChange={(e) => setUserQuery(e.target.value)}
+            placeholder="Enter your query"
+          />
+            <button onClick={() => fetchRecipes(userQuery)}>Search</button>
+    </div>
           <div className="filter-options">
             <label className="filter-label">
               <input
