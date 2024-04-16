@@ -20,13 +20,14 @@ function App() {
 
   useEffect(() => {
     const hasClearedLocalStorage = localStorage.getItem('hasClearedLocalStorage');
-    if (!hasClearedLocalStorage) {
+    if (!isLoggedIn && !hasClearedLocalStorage) {
       localStorage.clear();
       localStorage.setItem('hasClearedLocalStorage', 'true');
     }
-  }, []);
+  }, [isLoggedIn]);
 
   const handleLogout = () => {
+    localStorage.clear(); // Clear localStorage when user logs out
     setIsLoggedIn(false);
   };
 
