@@ -41,7 +41,7 @@ export default function Navigation({ isLoggedIn, handleLogout }) {
             {isLoggedIn && (
             <>
               <Link to='/share-recipe' className="ml-auto">
-                <Button variant="outline-primary">Share</Button>
+                <Button style={{margin: '15px'}} variant="outline-primary">Share</Button>
               </Link>
               <Logout handleLogout={handleLogout} />
             </>
