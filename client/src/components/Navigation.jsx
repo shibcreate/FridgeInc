@@ -36,7 +36,8 @@ export default function Navigation({ isLoggedIn, handleLogout }) {
                 marginLeft: '5px',
               }}
             ></div>
-            </Nav.Link>      
+            </Nav.Link>     
+            </Nav> 
             {isLoggedIn && (
             <>
               <Link to='/share-recipe' className="ml-auto">
@@ -45,7 +46,6 @@ export default function Navigation({ isLoggedIn, handleLogout }) {
               <Logout handleLogout={handleLogout} />
             </>
           )}
-        </Nav>
         {!isLoggedIn && (
           <Link to='/login' className="ml-auto">
             <Button variant="outline-success">Log In</Button>
