@@ -241,10 +241,9 @@ export default function RecipesList() {
             .filter(filterRecipes)
             .map((recipe, index) => (
               <Card key={index} style={{ width: '18rem', display: 'flex', flexDirection: 'column' }}>
-              <Card.Img variant="top" src={recipe.recipe.image} />
-              <Card.Body style={{ flexGrow: 1 }}>
-                <h3 style={{ marginBottom: '10px', color: 'blue', fontFamily: 'Arial' }}>{recipe.recipe.label}</h3>
-                <Card.Text style={{ fontSize: '14px', marginBottom: '15px', flexGrow: 1 }}>
+                <Card.Img variant="top" src={recipe.recipe.image} />
+                <Card.Body style={{ flexGrow: 1 }}>
+                  <h3 style={{ marginBottom: '10px', color: 'blue', fontFamily: 'Arial' }}>{recipe.recipe.label}</h3>
                   <h4>Ingredients</h4>
                   <ul style={{ listStyle: 'none', padding: 0 }}>
                     {recipe.recipe.ingredients &&
@@ -252,18 +251,17 @@ export default function RecipesList() {
                         <li key={index}>{ingredient.text}</li>
                       ))}
                   </ul>
-                </Card.Text>
-              </Card.Body>
-              <div className="button-group" style={{ marginTop: 'auto', marginBottom: '30px', textAlign: 'center' }}>
-                <Button variant={likes[recipe.recipe.uri] === 1 ? 'success' : 'outline-success'} onClick={() => handleLike(recipe.recipe.uri)}>
-                  Like
-                </Button>
-                <Button variant="primary" href={recipe.recipe.url} target="_blank" rel="noopener noreferrer" style={{ marginTop: '10px', width: '100%' }}>
-                  View Preparation
-                </Button>
-              </div>
-            </Card>
-            
+                </Card.Body>
+                <div className="button-group" style={{ marginTop: 'auto', marginBottom: '30px', textAlign: 'center' }}>
+                  <Button variant={likes[recipe.recipe.uri] === 1 ? 'success' : 'outline-success'} onClick={() => handleLike(recipe.recipe.uri)}>
+                    Like
+                  </Button>
+                  <Button variant="primary" href={recipe.recipe.url} target="_blank" rel="noopener noreferrer" style={{ marginTop: '10px', width: '100%' }}>
+                    View Preparation
+                  </Button>
+                </div>
+              </Card>
+
             ))}
       </div>
     </div>
