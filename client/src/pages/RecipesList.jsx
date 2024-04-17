@@ -3,8 +3,8 @@ import axios from 'axios';
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 
-const APP_ID = '67d82505';
-const APP_KEY = '6cc2264f11d4364c5dfdab7aab84538f';
+const APP_ID = '41d4abc9';
+const APP_KEY = 'efc1af159e76c89641e1fadf0876a50e';
 const DEFAULT_QUERY = 'popular'; // Default search query
 
 export default function RecipesList() {
