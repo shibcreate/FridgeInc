@@ -25,6 +25,8 @@ export default function Navigation({ isLoggedIn, handleLogout }) {
 
           <Nav.Link href="/recipes">Recipes</Nav.Link>
 
+          <Nav.Link href="/custom-list">Custom Recipes</Nav.Link>
+
           <Nav.Link href="/upload">Upload
             <div
               style={{

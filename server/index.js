@@ -87,13 +87,14 @@ app.post('/login', async (req, res) => {
 
 
 app.post('/upload-custom-recipes', async (req, res) => {
-  const { name, email, recipeName, ingredients, recipeText } = req.body;
+  const { name, email, recipeName, recipePic, ingredients, recipeText } = req.body;
 
   try {
     const customRecs = await CustomModel.create({
       name: name, // connect the custom recipe to the user by username?
       email: email,
       recipeName: recipeName,
+      recipePic: recipePic,
       ingredients: ingredients,
       recipeText: recipeText,
     });
@@ -130,6 +131,19 @@ app.post('/save-diet-preference', async (req, res) => {
 });
 
 
+app.post('/upload-recipe-pic', async (req, res) => {
+  const {base64} = req.body;
+  try{
+    Images.create({recipePic : base64});
+
+    return res.json({ message: 'Recipe picture uploaded successfully' });
+  }
+  catch(error) {
+    console.error('Error uploading recipe picture:', error);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+
+})
 app.post('/upload-liked-recipes', async (req, res) => {
   const { email, likedRecipes } = req.body;
 

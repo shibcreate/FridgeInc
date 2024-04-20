@@ -4,6 +4,7 @@ const CustomRecs = new mongoose.Schema({
     name: String,
     email: String,
     recipeName: String,
+    recipePic: String,
     ingredients: String,
     recipeText: String,
 });

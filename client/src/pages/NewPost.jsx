@@ -8,6 +8,7 @@ export default function NewPost({ isLoggedIn, setIsLoggedIn }) {
     const location = useLocation();
     const {email, name} = location.state || {};
     const [recipeName, setRecipeName] = useState('');
+    const [recipePic, setRecipePic] = useState('');
     const [ingredients, setIngredients] = useState('');
     const [recipeText, setRecipeText] = useState('');
 
@@ -36,7 +37,7 @@ export default function NewPost({ isLoggedIn, setIsLoggedIn }) {
             headers: {
               'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ name, email, recipeName, ingredients, recipeText }),
+            body: JSON.stringify({ name, email, recipeName, recipePic, ingredients, recipeText }),
           });
     
           if (response.ok) {
@@ -48,6 +49,22 @@ export default function NewPost({ isLoggedIn, setIsLoggedIn }) {
           console.error('Error saving custom recipe:', error);
         }
       };
+
+    const convertToBase64 = (e) => {
+        console.log(e);
+        var reader = new FileReader(); //file reader
+        const fileToString = reader.readAsDataURL(e.target.files[0]);    //turning into string to store
+        reader.onload = () =>{
+            console.log(reader.result);
+            setRecipePic(reader.result);
+        }
+
+        reader.onerror = error => {
+            console.log("Error selecting file ", error);
+            
+        }
+    };
+
 
 
     return (
@@ -63,12 +80,21 @@ export default function NewPost({ isLoggedIn, setIsLoggedIn }) {
                         />
                     </Form.Group>
 
-                    {/*     will come back to pic upload later
+                    
                     <Form.Group controlId="formFile" className="mb-3">
-                        <Form.Label>Upload your recipe image</Form.Label>
-                        <Form.Control type="file" placeholder='Upload image'/>
+                        <Form.Label>Upload your recipe image</Form.Label><br></br>
+                        <input
+                        accept="image/*"
+                        type="file"
+                        onChange={(e) => {convertToBase64(e)}
+                        }
+                        />
+
+                        <br></br>
+                        {recipePic == "" || recipePic == null?"" : <img width = {100} height = {100} src = {recipePic} />}
+
                     </Form.Group>
-                    */}
+                    
                     
                     <Form.Group className="mb-3">
                         <Form.Label>Ingredient List</Form.Label>
@@ -77,6 +103,7 @@ export default function NewPost({ isLoggedIn, setIsLoggedIn }) {
                             placeholder="Ingredients"
                             onChange = {(e) => setIngredients(e.target.value)}
                         />
+
                     </Form.Group>
                     <Form.Group className="mb-3">
                         <Form.Label>Preparation</Form.Label>

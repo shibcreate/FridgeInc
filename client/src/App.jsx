@@ -11,6 +11,7 @@ import Upload from './pages/Upload';
 import RecipesList from './pages/RecipesList';
 import Profile from './pages/Profile';
 import NewPost from './pages/NewPost';
+import CustomList from './pages/CustomList';
 // import components
 import Navigation from './components/Navigation';
 import Footer from './components/Footer';
@@ -44,6 +45,7 @@ function App() {
             <Route path="/profile" element={<Profile isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />} />
             <Route path="/upload" element={<Upload isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />} /> {/* protected route */}
             <Route path="/recipes" element={<RecipesList />} />
+            <Route path="/custom-list" element={<CustomList />} /> 
             <Route path="/share-recipe" element={<NewPost isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />} /> {/* protected route */}
           </Routes>
         </main>
