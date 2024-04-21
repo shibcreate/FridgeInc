@@ -130,20 +130,29 @@ app.post('/save-diet-preference', async (req, res) => {
   }
 });
 
+/////////////////////////
 
-app.post('/upload-recipe-pic', async (req, res) => {
-  const {base64} = req.body;
-  try{
-    Images.create({recipePic : base64});
+app.get('/upload-custom-list', async (req, res) => {
+  //see if can retrieve documents
+  try {
+    const { recipeName } = req.query;
 
-    return res.json({ message: 'Recipe picture uploaded successfully' });
+    if (recipeName) {
+      // if the user querys recipe name!!
+      const specificRecipes = await CustomModel.find({ recipeName: { $regex: recipeName, $options: 'i' } });
+      res.json(specificRecipes);
+    } 
+    else {
+      // if no query, all recipes generated
+      const allRecipes = await CustomModel.find({});
+      res.json(allRecipes);
+    }
+  } catch (error) {
+    console.error('Error retrieving recipes:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
-  catch(error) {
-    console.error('Error uploading recipe picture:', error);
-    return res.status(500).json({ error: 'Internal server error' });
-  }
+});
 
-})
 app.post('/upload-liked-recipes', async (req, res) => {
   const { email, likedRecipes } = req.body;
 
