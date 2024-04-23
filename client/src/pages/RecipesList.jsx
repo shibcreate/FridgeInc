@@ -20,7 +20,39 @@ export default function RecipesList() {
   const [showLikesOnly, setShowLikesOnly] = useState(false); // New state for showLikesOnly
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userQuery, setUserQuery] = useState('');
+  const [formattedIngredients, setFormattedIngredients] = useState(''); 
 
+  const removeLastIngredient = async () => {
+    // Update formattedIngredients with the value from localStorage
+    const formattedIngredients = localStorage.getItem('formattedIngredients') || '';
+  
+    if (!formattedIngredients) {
+      console.log('No ingredients to remove.');
+      return;
+    }
+  
+    const ingredientsArray = formattedIngredients.split(',');
+    
+    if (ingredientsArray.length > 1) {
+      ingredientsArray.pop();
+      ingredientsArray.pop();
+    }
+    
+    const newFormattedIngredients = ingredientsArray.map(ingredient => ingredient.trim()).join(', ');
+    console.log('New ingredients:', newFormattedIngredients); 
+    setFormattedIngredients(newFormattedIngredients);
+    
+    // Save the updated ingredients list to localStorage
+    localStorage.setItem('formattedIngredients', newFormattedIngredients);
+    
+    // Fetch new recipes with the updated ingredients list only if it's not empty
+    if (newFormattedIngredients !== '') {
+      await fetchRecipes(newFormattedIngredients);
+    } else {
+      // If newFormattedIngredients is empty, fetch recipes for the stored default query
+      await fetchRecipes(storedDefaultQuery);
+    }
+  };
 
   useEffect(() => {
     const checkAuthentication = async () => {
@@ -143,6 +175,7 @@ export default function RecipesList() {
   return (
     <div>
       <h2>Found {recipes.length} recipe(s)</h2>
+      <Button onClick={removeLastIngredient}>Check with Less Ingrediants</Button>
       <h1>Recommended Recipes</h1>
       <div className="user-query">
         <input
