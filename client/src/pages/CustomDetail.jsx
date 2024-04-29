@@ -11,9 +11,8 @@ function CustomDetail() {
     useEffect(() => {
         const fetchRecipe = async () => {
             try {
-                // Make a GET request to your backend API endpoint using the id parameter
                 const response = await axios.get(`http://localhost:3001/upload-custom-list/${id}`);
-                setRecipe(response.data); // Assuming your backend returns the recipe data as JSON
+                setRecipe(response.data);
                 setLoading(false);
             } catch (error) {
                 setError(error);

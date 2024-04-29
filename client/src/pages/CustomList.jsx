@@ -82,7 +82,6 @@ export default function CustomList({ isLoggedIn, setIsLoggedIn }) {
                                 <button className="btn btn-link" onClick={() => toggleShowMore(index)}>
                                     {recipe.showMore ? 'Show Less' : 'Show More'}
                                 </button>
-                                {/* Add a Link to view the full recipe */}
                                 <Link to={`/custom-list/${recipe._id}`} className="btn btn-primary">View Recipe</Link>
                             </div>
                         </div>
