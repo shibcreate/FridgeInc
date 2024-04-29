@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 
-export default function CustomList() {
+export default function CustomList({isLoggedIn, setIsLoggedIn}) {
     const location = useLocation();
     const {email, name} = location.state || {};
     
@@ -12,14 +12,11 @@ export default function CustomList() {
     const [recipeText, setRecipeText] = useState('');
     const [searchQuery, setSearchQuery] = useState('');
     const [customList, setCustomList] = useState([]);
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-
-
+   
     useEffect(() => {
         const checkAuthentication = async () => {
             try {
-                const response = await axios.get('http://localhost:3001/share-recipe', {
+                const response = await axios.get('http://localhost:3001/authorized', {
                     withCredentials: true
                 });
                 if (response.status === 200) {

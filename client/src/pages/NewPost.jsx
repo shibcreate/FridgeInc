@@ -116,7 +116,7 @@ export default function NewPost({ isLoggedIn, setIsLoggedIn }) {
                     </Button>
                 </Form>
             ) : (
-                <p>Please join us to share your recipes.</p>
+                <h5>Please join us to share your recipes.</h5>
             )}
         </div>
     );

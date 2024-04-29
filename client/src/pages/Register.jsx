@@ -1,15 +1,31 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 
-export default function Register() {
+export default function Register({isLoggedIn, setIsLoggedIn}) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const checkAuthentication = async () => {
+        try {
+            const response = await axios.get('http://localhost:3001/authorized', {
+                withCredentials: true
+            });
+            if (response.status === 200) {
+                setIsLoggedIn(true);
+            }
+        } catch (error) {
+            setIsLoggedIn(false);
+        }
+    };
+    checkAuthentication();
+}, [isLoggedIn]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -34,6 +50,7 @@ export default function Register() {
     setShowPassword(!showPassword);
   };
 
+  if(!isLoggedIn) {
   return (
     <Form onSubmit={handleSubmit}>
       <Form.Group md="6">
@@ -99,4 +116,7 @@ export default function Register() {
       </Link>
     </Form>
   );
+} else {
+  return <h5>You are already logged in</h5>
+}
 }

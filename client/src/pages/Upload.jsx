@@ -162,7 +162,7 @@ export default function Upload({ isLoggedIn, setIsLoggedIn }) {
           )}
         </div>
       ) : (
-        <p>Please log in to view this page.</p>
+        <h5>Please log in to view this page.</h5>
       )}
     </div>
   );

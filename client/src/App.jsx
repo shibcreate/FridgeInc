@@ -39,13 +39,13 @@ function App() {
         <main>
           <Routes>
             <Route path="/" element={<Homepage isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/login" element={<Login setLoggedIn={setIsLoggedIn} />} />
-            <Route path="/register" element={<Register />} />
+            <Route path="/about" element={<About isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn}/>} />
+            <Route path="/login" element={<Login isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />} />
+            <Route path="/register" element={<Register isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn}/>} />
             <Route path="/profile" element={<Profile isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />} />
             <Route path="/upload" element={<Upload isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />} /> {/* protected route */}
-            <Route path="/recipes" element={<RecipesList />} />
-            <Route path="/custom-list" element={<CustomList />} /> 
+            <Route path="/recipes" element={<RecipesList isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn}/>} />
+            <Route path="/custom-list" element={<CustomList isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn}/>} /> 
             <Route path="/share-recipe" element={<NewPost isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />} /> {/* protected route */}
           </Routes>
         </main>

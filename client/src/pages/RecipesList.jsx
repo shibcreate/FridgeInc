@@ -7,7 +7,7 @@ const APP_ID = '41d4abc9';
 const APP_KEY = 'efc1af159e76c89641e1fadf0876a50e';
 const DEFAULT_QUERY = 'popular'; // Default search query
 
-export default function RecipesList() {
+export default function RecipesList({isLoggedIn, setIsLoggedIn}) {
   const [recipes, setRecipes] = useState([]);
   const [filters, setFilters] = useState({
     vegetarian: false,
@@ -18,7 +18,7 @@ export default function RecipesList() {
   const [likes, setLikes] = useState({});
   const [likedRecipes, setLikedRecipes] = useState([]);
   const [showLikesOnly, setShowLikesOnly] = useState(false); // New state for showLikesOnly
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  //const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userQuery, setUserQuery] = useState('');
   const [formattedIngredients, setFormattedIngredients] = useState(''); 
 
@@ -57,27 +57,38 @@ export default function RecipesList() {
   useEffect(() => {
     const checkAuthentication = async () => {
       try {
-        const response = await axios.get('http://localhost:3001/recipes', {
+        const response = await axios.get('http://localhost:3001/authorized', {
           withCredentials: true
         });
-        if (response.data === 'recipe list') {
+        if (response.status === 200) {
           setIsLoggedIn(true);
-          console.log('Recipes page access successfully!')
+          console.log('Authorized user')
         }
       } catch (error) {
         setIsLoggedIn(false);
-        console.log('Failted to access recipes page!')
+        console.log('User not authorized')
       }
     };
     checkAuthentication();
-  }, []);
+  }, [isLoggedIn]);
+
+  const getRecipes = async () => {
+    try {
+      const response = await axios.get('http://localhost:3001/recipes', {
+        withCredentials: true
+      });
+      if (response.data === 'recipe list') {
+        console.log('Recipes page access successfully!')
+      }
+    } catch (error) {
+      console.log('Failted to access recipes page!')
+    }
+  };
 
   useEffect(() => {
-    if (isLoggedIn) {
       const storedDefaultQuery = localStorage.getItem('formattedIngredients');
       fetchRecipes(storedDefaultQuery ? storedDefaultQuery : DEFAULT_QUERY);
-    }
-  }, [isLoggedIn]);
+    });
 
   const fetchRecipes = async (query) => {
     try {

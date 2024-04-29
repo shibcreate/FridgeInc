@@ -1,11 +1,31 @@
-import React from 'react'
+import React, {useEffect} from 'react'
+import axios from 'axios'
 import Container from 'react-bootstrap/Container'
 import Image from 'react-bootstrap/Image'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import Card from 'react-bootstrap/Card'
 
-export default function About() {
+
+export default function About({isLoggedIn, setIsLoggedIn}) {
+    useEffect(() => {
+        const checkAuthentication = async () => {
+          try {
+            const response = await axios.get('http://localhost:3001/authorized', {
+              withCredentials: true
+            });
+            if (response.status === 200) {
+              setIsLoggedIn(true);
+              console.log('Authorized user')
+            }
+          } catch (error) {
+            setIsLoggedIn(false);
+            console.log('User not authorized')
+          }
+        };
+        checkAuthentication();
+      }, [isLoggedIn]);
+
     return (
         <div>
             <Container className="justify-content-evenly">

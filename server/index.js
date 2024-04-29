@@ -210,8 +210,8 @@ app.get('/profile', validateToken, (req, res) => {
   res.json('profile page')
 });
 
-app.get('/share-recipe', validateToken, (req, res) => {
-  res.json('custom recipe page')
+app.get('/authorized', validateToken, (req, res) => {
+  res.json('user authentication check')
 });
 
 app.get('/logout', async (req, res) => {
