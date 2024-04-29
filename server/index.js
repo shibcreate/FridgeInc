@@ -153,6 +153,20 @@ app.get('/upload-custom-list', async (req, res) => {
   }
 });
 
+app.get('/upload-custom-list/:id', async (req, res) => {
+  const recipeId = req.params.id;
+  try {
+    const recipe = await CustomModel.findById(recipeId);
+    if (!recipe) {
+      return res.status(404).json({ message: 'Recipe not found' });
+    }
+    res.json(recipe);
+  } catch (error) {
+    console.error('Error fetching recipe:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
 app.post('/upload-liked-recipes', async (req, res) => {
   const { email, likedRecipes } = req.body;
 

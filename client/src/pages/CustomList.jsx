@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, Link } from 'react-router-dom'; // Import Link from react-router-dom
 import axios from 'axios';
 
-export default function CustomList({isLoggedIn, setIsLoggedIn}) {
+export default function CustomList({ isLoggedIn, setIsLoggedIn }) {
     const location = useLocation();
-    const {email, name} = location.state || {};
-    
+    const { email, name } = location.state || {};
+
     const [recipeName, setRecipeName] = useState('');
     const [recipePic, setRecipePic] = useState('');
     const [ingredients, setIngredients] = useState('');
     const [recipeText, setRecipeText] = useState('');
     const [searchQuery, setSearchQuery] = useState('');
     const [customList, setCustomList] = useState([]);
-   
+
     useEffect(() => {
         const checkAuthentication = async () => {
             try {
@@ -52,7 +52,7 @@ export default function CustomList({isLoggedIn, setIsLoggedIn}) {
     const toggleShowMore = (index) => {
         const updatedCustomList = [...customList];
         updatedCustomList[index].showMore = !updatedCustomList[index].showMore;
-        setCustomList(updatedCustomList);   
+        setCustomList(updatedCustomList);
     }
 
     return (
@@ -71,24 +71,24 @@ export default function CustomList({isLoggedIn, setIsLoggedIn}) {
                         <div className="card">
                             <img src={recipe.recipePic} className="card-img-top" alt={recipe.recipeName} />
                             <div className="card-body">
-                                <h5 className="card-title">{recipe.recipeName}</h5>
-                                <p className="card-text">
-                                   Ingredients: <br></br>
-                                   {recipe.showMore ? recipe.ingredients : `${recipe.ingredients.slice(0, 20)}...`}
-                                    <br />
-
-                                    Preparation: <br></br>
-                                    {recipe.showMore && recipe.recipeText}
-                                    
-                                </p>
+                                <h3 className="card-title">{recipe.recipeName}</h3>
+                                <h4 className="card-text">
+                                    Ingredients: <br></br> </h4>
+                                <ul style={{ listStyle: 'none', padding: 0 }}>
+                                    {recipe.ingredients.split(',').map((ingredient, index) => (
+                                        <li key={index}>{ingredient.trim()}</li>
+                                    ))}
+                                </ul>
                                 <button className="btn btn-link" onClick={() => toggleShowMore(index)}>
                                     {recipe.showMore ? 'Show Less' : 'Show More'}
                                 </button>
+                                {/* Add a Link to view the full recipe */}
+                                <Link to={`/custom-list/${recipe._id}`} className="btn btn-primary">View Recipe</Link>
                             </div>
                         </div>
                     </div>
                 ))}
             </div>
         </div>
-        );
+    );
 }
