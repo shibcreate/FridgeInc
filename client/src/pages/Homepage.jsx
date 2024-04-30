@@ -11,7 +11,7 @@ function Homepage({ isLoggedIn, setIsLoggedIn }) {
   useEffect(() => {
     const checkAuthentication = async () => {
       try {
-        const response = await axios.get('http://localhost:3001/', {
+        const response = await axios.get('http://localhost:3001/authorized', {
           withCredentials: true
         });
         if (response.status === 200) {

@@ -94,6 +94,6 @@ export default function Login({isLoggedIn, setIsLoggedIn}) {
     </Form>
   );
 } else {
-  return <h5>You are already logged in. If you wish to create a new account, log out first</h5>
+  return <h5>You are already logged in. If you wish to create a new account, please log out first</h5>
 }
   }

@@ -48,7 +48,7 @@ function CustomDetail() {
                         ))}
                     </ul>
                     <h2>Instructions</h2>
-                    <p>{recipe.recipeText}</p>
+                    <p style={{ whiteSpace: 'pre-line' }}>{recipe.recipeText}</p>
                 </div>
             )}
         </div>
