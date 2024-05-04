@@ -5,11 +5,6 @@ import axios from 'axios';
 export default function CustomList({ isLoggedIn, setIsLoggedIn }) {
     const location = useLocation();
     const { email, name } = location.state || {};
-
-    const [recipeName, setRecipeName] = useState('');
-    const [recipePic, setRecipePic] = useState('');
-    const [ingredients, setIngredients] = useState('');
-    const [recipeText, setRecipeText] = useState('');
     const [searchQuery, setSearchQuery] = useState('');
     const [customList, setCustomList] = useState([]);
 
@@ -49,12 +44,6 @@ export default function CustomList({ isLoggedIn, setIsLoggedIn }) {
         setSearchQuery(event.target.value);
     };
 
-    const toggleShowMore = (index) => {
-        const updatedCustomList = [...customList];
-        updatedCustomList[index].showMore = !updatedCustomList[index].showMore;
-        setCustomList(updatedCustomList);
-    }
-
     return (
         <div className="container">
             <h1 className="mt-3">Custom Recipes</h1>
@@ -75,13 +64,10 @@ export default function CustomList({ isLoggedIn, setIsLoggedIn }) {
                                 <h4 className="card-text">
                                     Ingredients: <br></br> </h4>
                                 <ul style={{ listStyle: 'none', padding: 0 }}>
-                                    {recipe.ingredients.split(',').map((ingredient, index) => (
+                                    {recipe.ingredients && recipe.ingredients.split(',').map((ingredient, index) => (
                                         <li key={index}>{ingredient.trim()}</li>
                                     ))}
                                 </ul>
-                                <button className="btn btn-link" onClick={() => toggleShowMore(index)}>
-                                    {recipe.showMore ? 'Show Less' : 'Show More'}
-                                </button>
                                 <Link to={`/custom-list/${recipe._id}`} className="btn btn-primary">View Recipe</Link>
                             </div>
                         </div>

@@ -5,7 +5,7 @@ const UserModel = require("./models/Users");
 const CustomModel = require("./models/CustomRecipes");
 const bcrypt = require('bcrypt');
 const cookieParser = require('cookie-parser');
-const { createToken, validateToken } = require('./middleware/auth');
+const { createToken, validateToken,checkAuth } = require('./middleware/auth');
 
 const app = express();
 app.use(express.json());
@@ -24,7 +24,7 @@ app.use((req, res, next) => {
   next();
 });
 app.use(cookieParser());
-
+app.use(checkAuth)
 // MongoDB connection
 mongoose.connect("mongodb+srv://admin:Testing1234!@fridgeinc.rufgqkq.mongodb.net/?retryWrites=true&w=majority&appName=fridgeinc", {
   useNewUrlParser: true,
@@ -87,8 +87,10 @@ app.post('/login', async (req, res) => {
 
 
 app.post('/upload-custom-recipes', async (req, res) => {
-  const { name, email, recipeName, recipePic, ingredients, recipeText } = req.body;
-
+  const { name, email, recipeName, recipePic, ingredients, recipeText, user } = req.body;
+console.log(req.body)
+const userId = req.user ? req.user._id : null;
+console.log(userId)
   try {
     const customRecs = await CustomModel.create({
       name: name, // connect the custom recipe to the user by username?
@@ -97,6 +99,7 @@ app.post('/upload-custom-recipes', async (req, res) => {
       recipePic: recipePic,
       ingredients: ingredients,
       recipeText: recipeText,
+      user: userId
     });
 
     return res.json({ message: 'Custom recipe saved successfully' });
@@ -167,6 +170,65 @@ app.get('/upload-custom-list/:id', async (req, res) => {
   }
 });
 
+app.get('/custom-list/posts', async (req, res) => {
+  try {
+    const userId = req.user ? req.user._id : null;
+    const userPosts = await CustomModel.find({ user: userId});
+    if (userPosts.length === 0) {
+      return res.status(404).json({ message: 'No posts found for this user' });
+    }
+    res.status(200).json({ posts: userPosts });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+app.get('/custom-list/posts/:postId', async (req, res) => {
+  const postId = req.params.postId;
+  try {
+    const post = await CustomModel.findById(postId);
+    if (!post) {
+      return res.status(404).json({ message: 'Post not found' });
+    }
+    res.status(200).json({ post });
+  } catch (error) {
+    console.error('Error fetching post details:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+ 
+});
+
+
+app.put('/custom-list/posts/:postId', async (req, res) => {
+  const postId = req.params.postId;
+  const updatedData = req.body;
+  try {
+    const updatedPost = await CustomModel.findByIdAndUpdate(postId, updatedData, {new:true});
+    if(!updatedPost) {
+      return res.status(404).json({message:'Posts not found'});
+    }
+    res.status(200).json({message: 'Post updated sucessfully', post: updatedPost})
+  } catch (err) {
+    console.error('Error editing post: ', err);
+    res.status(500).json({message: "Internal server error"})
+  }
+});
+
+app.delete('/custom-list/posts/:postId', async (req, res) => {
+  const postId = req.params.postId;
+  try {
+    const deletedPost = await CustomModel.findByIdAndDelete(postId);
+    if (!deletedPost) {
+      return res.status(404).json({message: 'Post not found'});
+    }
+    res.status(200).json({message: 'Successfully deleted post'});
+  } catch (err) {
+    console.error('Error deleting post:', err);
+    res.status(500).json({ err: 'Internal server error' });
+  }
+});
+
 app.post('/upload-liked-recipes', async (req, res) => {
   const { email, likedRecipes } = req.body;
 
@@ -188,7 +250,6 @@ app.post('/upload-liked-recipes', async (req, res) => {
     return res.status(500).json({ error: 'Internal server error' });
   }
 });
-
 
 app.post('/import-preferences', async (req, res) => {
   const { email } = req.body;
@@ -231,7 +292,6 @@ app.get('/authorized', validateToken, (req, res) => {
 app.get('/logout', async (req, res) => {
   res.status(202).clearCookie('access-token').send('cookie cleared')
 });
-
 
 app.listen(3001, () => {
   console.log("Server is running on port 3001");

@@ -9,6 +9,11 @@ const UserSchema = new mongoose.Schema({
     enum: ['No-Eggs', 'Vegetarian', 'Gluten-Free', 'Low-Fat', 'High-Protein', 'Vegan', 'Nut-Free', 'Low-Sodium'], // Define the allowed diet preferences
     default: 'Vegetarian', // Set a default value if not specified
   },
+  posts: {
+    type: mongoose.Types.ObjectId,
+    ref: 'CustomRecs'
+  }
+
 });
 
 const UserModel = mongoose.model('Users', UserSchema);

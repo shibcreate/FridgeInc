@@ -73,7 +73,7 @@ export default function Login({isLoggedIn, setIsLoggedIn}) {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          <input
+          <input 
             type="checkbox"
             id="showPassword"
             checked={showPassword}

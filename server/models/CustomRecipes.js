@@ -7,6 +7,10 @@ const CustomRecs = new mongoose.Schema({
     recipePic: String,
     ingredients: String,
     recipeText: String,
+    user: {
+        type: mongoose.Types.ObjectId,
+        ref: 'Users'
+    }
 });
 
 const CustomModel = mongoose.model('CustomRecs', CustomRecs);
