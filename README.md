@@ -38,21 +38,31 @@ Users are able to create an account and log into the account. From there, they c
 | GET    | /upload                       | For users to upload their fridge pictures |
 | GET    | /recipes                      | Show recipes to users                     |
 | GET    | /                             | Show selected navigate button in homepage |
+| GET    | /authorized                   | Keep track of log in state                |
 | GET    | /profile                      | Store user info and reference             |
-| GET    | /share-recipe                 | For users to upload their recipes         |
-| POST   | /upload-custom-recipes        | Store users' shared recipes               |
+| GET    | /upload-custom-list           | Show list of users recipes                |
+| POST   | /upload-custom-recipes        | For users to upload their recipes         |
+| GET    | /custom-list/posts            | Only show posts by specific user          |
+| GET    | /custom-list/posts/:postId    | Show post detail on edit page             |
+| PUT    | /custom-list/posts/:postId    | Update new input into database            |
+| DELETE | /custom-list/posts/:postId    | Delete a custom recipe from database      |
 | GET    | /logout                       | Log user out                              |
 
 ### App (http://localhost:5173)
-| Path           | Component                | Purpose                                |
-| -------------- | ------------------------ | -------------------------------------- |
-| /              | `pages/Homepage.jsx`                | Home page                              |
-| /register      | `pages/Register.jsx`     | Form for creating a new user           |
-| /login         | `pages/Login.jsx`        | Form for logging in                    |
-| /upload        | `pages/Upload.jsx`       | Upload picture and show result         |
-| /profile       | `pages/Profile.jsx`      | User profile                           |
-| /recipes       | `pages/Recipes.jsx`      | List of recipes                        |
-| /share-recipe  | `pages/NewPost.jsx`      | Form for share custom recipes          |
+| Path                               | Component                | Purpose                                          |
+| -----------------------------------| ------------------------ | ------------------------------------------------ |
+| /                                  | `pages/Homepage.jsx`     | Home page                                        |
+| /register                          | `pages/Register.jsx`     | Form for creating a new user                     |
+| /login                             | `pages/Login.jsx`        | Form for logging in                              |
+| /upload                            | `pages/Upload.jsx`       | Upload picture and show result                   |
+| /profile                           | `pages/Profile.jsx`      | User profile                                     |
+| /recipes                           | `pages/Recipes.jsx`      | List of recipes                                  |
+| /share-recipe                      | `pages/NewPost.jsx`      | Form for share custom recipes                    |
+| /about                             | `pages/About.jsx`        | Introduction of FridgeInc                        |
+| /custom-list                       | `pages/CustomList.jsx`   | Show all custom recipes                          |
+| /custom-list/:id                   | `pages/CustomDetail.jsx` | Show individual custom recipe                    |
+| /custom-list/posts                 | `pages/Posts.jsx`        | Show all custom recipes by current user          |
+| /custom-list/posts/:postId         | `pages/EditPost.jsx`     | Form to edit post                                |
 
 ### Models 
 
