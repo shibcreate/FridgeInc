@@ -2,25 +2,32 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
+import Spinner from 'react-bootstrap/Spinner'; // Import Spinner component for loader
 
 const APP_ID = '41d4abc9';
 const APP_KEY = 'efc1af159e76c89641e1fadf0876a50e';
 const DEFAULT_QUERY = 'popular'; // Default search query
 
-export default function RecipesList({isLoggedIn, setIsLoggedIn}) {
+export default function RecipesList() {
   const [recipes, setRecipes] = useState([]);
+  const [loading, setLoading] = useState(true); // State to track loading status
   const [filters, setFilters] = useState({
     vegetarian: false,
     glutenFree: false,
     noEggs: false,
+    lowFat: false,
+    highProtein: false,
+    vegan: false,
+    nutFree: false,
+    lowSodium: false,
   });
   const [email, setEmail] = useState('');
   const [likes, setLikes] = useState({});
   const [likedRecipes, setLikedRecipes] = useState([]);
-  const [showLikesOnly, setShowLikesOnly] = useState(false); // New state for showLikesOnly
-  //const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [showLikesOnly, setShowLikesOnly] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userQuery, setUserQuery] = useState('');
-  const [formattedIngredients, setFormattedIngredients] = useState(''); 
+  const [formattedIngredients, setFormattedIngredients] = useState('');
 
   const removeLastIngredient = async () => {
     // Update formattedIngredients with the value from localStorage
@@ -56,39 +63,32 @@ export default function RecipesList({isLoggedIn, setIsLoggedIn}) {
 
   useEffect(() => {
     const checkAuthentication = async () => {
+      if (isLoggedIn) {
+        const storedDefaultQuery = localStorage.getItem('formattedIngredients');
+        fetchRecipes(storedDefaultQuery ? storedDefaultQuery : DEFAULT_QUERY);
+      }
       try {
-        const response = await axios.get('http://localhost:3001/authorized', {
-          withCredentials: true
+        const response = await axios.get('http://localhost:3001/recipes', {
+          withCredentials: true,
         });
-        if (response.status === 200) {
+        if (response.data === 'recipe list') {
           setIsLoggedIn(true);
-          console.log('Authorized user')
+          console.log('Recipes page access successfully!');
         }
       } catch (error) {
         setIsLoggedIn(false);
-        console.log('User not authorized')
+        console.log('Failed to access recipes page!');
       }
     };
     checkAuthentication();
-  }, [isLoggedIn]);
-
-  const getRecipes = async () => {
-    try {
-      const response = await axios.get('http://localhost:3001/recipes', {
-        withCredentials: true
-      });
-      if (response.data === 'recipe list') {
-        console.log('Recipes page access successfully!')
-      }
-    } catch (error) {
-      console.log('Failted to access recipes page!')
-    }
-  };
+  }, []);
 
   useEffect(() => {
+    if (isLoggedIn) {
       const storedDefaultQuery = localStorage.getItem('formattedIngredients');
       fetchRecipes(storedDefaultQuery ? storedDefaultQuery : DEFAULT_QUERY);
-    });
+    }
+  }, [isLoggedIn]);
 
   const fetchRecipes = async (query) => {
     try {
@@ -97,6 +97,7 @@ export default function RecipesList({isLoggedIn, setIsLoggedIn}) {
       );
       console.log('API response:', response.data);
       setRecipes(response.data.hits);
+      setLoading(false); // Set loading to false once data is fetched
 
       const initialLikes = {};
       response.data.hits.forEach((recipe) => {
@@ -128,6 +129,8 @@ export default function RecipesList({isLoggedIn, setIsLoggedIn}) {
     if (showLikesOnly && !likedRecipes.includes(recipe.recipe.uri)) {
       return false; // Show only liked recipes if showLikesOnly is true
     }
+  
+    // Check each filter separately
     if (filters.noEggs && recipe.recipe.ingredients.some((ingredient) => ingredient.text.toLowerCase().includes('egg'))) {
       return false;
     }
@@ -137,21 +140,22 @@ export default function RecipesList({isLoggedIn, setIsLoggedIn}) {
     if (filters.glutenFree && !recipe.recipe.healthLabels.includes('Gluten-Free')) {
       return false;
     }
-    if (filters.lowFat && recipe.recipe.healthLabels.includes('Low-Fat')) {
+    if (filters.lowFat && !recipe.recipe.healthLabels.includes('Low-Fat')) {
       return false;
     }
-    if (filters.highProtein && recipe.recipe.healthLabels.includes('High-Protein')) {
+    if (filters.highProtein && !recipe.recipe.healthLabels.includes('High-Protein')) {
       return false;
     }
     if (filters.vegan && !recipe.recipe.healthLabels.includes('Vegan')) {
       return false;
     }
-    if (filters.nutFree && recipe.recipe.healthLabels.includes('Peanuts' || 'Tree-Nuts')) {
+    if (filters.nutFree && recipe.recipe.healthLabels.includes('Peanuts') || recipe.recipe.healthLabels.includes('Tree-Nuts')) {
       return false;
     }
-    if (filters.lowSodium && recipe.recipe.healthLabels.includes('Low-Sodium')) {
+    if (filters.lowSodium && !recipe.recipe.healthLabels.includes('Low-Sodium')) {
       return false;
     }
+  
     return true;
   };
 
@@ -162,152 +166,246 @@ export default function RecipesList({isLoggedIn, setIsLoggedIn}) {
       });
       console.log('Import preferences response:', response.data);
 
-      setFilters({
-        noEggs: response.data.dietPreference.includes(1),
-        vegetarian: response.data.dietPreference.includes(2),
-        glutenFree: response.data.dietPreference.includes(3),
-        lowFat: response.data.dietPreference.includes(4),
-        highProtein: response.data.dietPreference.includes(5),
-        vegan: response.data.dietPreference.includes(6),
-        nutFree: response.data.dietPreference.includes(7),
-        lowSodium: response.data.dietPreference.includes(8),
-      });
+      const newFilters = {};
+      for (const filter in response.data.dietPreference) {
+        newFilters[response.data.dietPreference[filter]] = true;
+      }
+      setFilters(newFilters);
 
       const storedDefaultQuery = localStorage.getItem('formattedIngredients');
       fetchRecipes(storedDefaultQuery ? storedDefaultQuery : DEFAULT_QUERY);
 
       setEmail('');
-
     } catch (error) {
       console.error('Error importing preferences:', error);
     }
   };
 
   return (
-    <div>
-      <h2>Found {recipes.length} recipe(s)</h2>
-      <Button onClick={removeLastIngredient}>Check with Less Ingrediants</Button>
-      <h1>Recommended Recipes</h1>
-      <div className="user-query">
-        <input
-          type="text"
-          value={userQuery}
-          onChange={(e) => setUserQuery(e.target.value)}
-          placeholder="Enter your query"
-        />
-        <button onClick={() => fetchRecipes(userQuery)}>Search</button>
-      </div>
-      <div className="filter-options">
-        <label className="filter-label">
-          <input
-            type="checkbox"
-            checked={filters.vegetarian}
-            onChange={() => handleFilterChange('vegetarian')}
-          />
-          Vegetarian
-        </label>
-        <label className="filter-label">
-          <input
-            type="checkbox"
-            checked={filters.glutenFree}
-            onChange={() => handleFilterChange('glutenFree')}
-          />
-          Gluten-Free
-        </label>
-        <label className="filter-label">
-          <input
-            type="checkbox"
-            checked={filters.noEggs}
-            onChange={() => handleFilterChange('noEggs')}
-          />
-          No Eggs
-        </label>
-        <label className="filter-label">
-          <input
-            type="checkbox"
-            checked={filters.lowFat}
-            onChange={() => handleFilterChange('lowFat')}
-          />
-          Low-Fat
-        </label>
-        <label className="filter-label">
-          <input
-            type="checkbox"
-            checked={filters.highProtein}
-            onChange={() => handleFilterChange('highProtein')}
-          />
-          High-Protein
-        </label>
-        <label className="filter-label">
-          <input
-            type="checkbox"
-            checked={filters.vegan}
-            onChange={() => handleFilterChange('vegan')}
-          />
-          Vegan
-        </label>
-        <label className="filter-label">
-          <input
-            type="checkbox"
-            checked={filters.nutFree}
-            onChange={() => handleFilterChange('nutFree')}
-          />
-          Nut-Free
-        </label>
-        <label className="filter-label">
-          <input
-            type="checkbox"
-            checked={filters.lowSodium}
-            onChange={() => handleFilterChange('lowSodium')}
-          />
-          Low-Sodium
-        </label>
-        <div style={{ marginTop: '10px' }}>
-          <input
-            type="text"
-            placeholder="Enter email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <Button variant="primary" onClick={importPreferences} style={{ marginLeft: '10px' }}>
-            Import Preferences
-          </Button>
-        </div>
-      </div>
-      <div className="toggle-likes-button">
-        <Button variant="primary" onClick={() => setShowLikesOnly(!showLikesOnly)}>
-          {showLikesOnly ? 'Show All Recipes' : 'Show Likes Only'}
-        </Button>
-      </div>
-      <div className="recipe-grid">
-        {recipes &&
-          (showLikesOnly ? likedRecipes.map((uri) => recipes.find((recipe) => recipe.recipe.uri === uri)) : recipes)
-            .filter(filterRecipes)
-            .map((recipe, index) => (
-              <Card key={index} style={{ width: '18rem', display: 'flex', flexDirection: 'column' }}>
-                <Card.Img variant="top" src={recipe.recipe.image} />
-                <Card.Body style={{ flexGrow: 1 }}>
-                  <h3 style={{ marginBottom: '10px', color: 'blue', fontFamily: 'Arial' }}>{recipe.recipe.label}</h3>
-                  <h4>Ingredients</h4>
-                  <ul style={{ listStyle: 'none', padding: 0 }}>
-                    {recipe.recipe.ingredients &&
-                      recipe.recipe.ingredients.map((ingredient, index) => (
-                        <li key={index}>{ingredient.text}</li>
-                      ))}
-                  </ul>
-                </Card.Body>
-                <div className="button-group" style={{ marginTop: 'auto', marginBottom: '30px', textAlign: 'center' }}>
-                  <Button variant={likes[recipe.recipe.uri] === 1 ? 'success' : 'outline-success'} onClick={() => handleLike(recipe.recipe.uri)}>
-                    Like
-                  </Button>
-                  <Button variant="primary" href={recipe.recipe.url} target="_blank" rel="noopener noreferrer" style={{ marginTop: '10px', width: '100%' }}>
-                    View Preparation
-                  </Button>
-                </div>
-              </Card>
-
-            ))}
-      </div>
+    <>
+  <div className="div">
+    <div className="div-2">
+      <img
+        loading="lazy"
+        srcSet="https://cdn.builder.io/api/v1/image/assets/TEMP/7415d04f090ef15887d955ffd7ffaf7602215d961a11f3adb2e6f1609ca1c53f?apiKey=fe3b0463a8ae420ab1241e00fcde5d70&width=100 100w, https://cdn.builder.io/api/v1/image/assets/TEMP/7415d04f090ef15887d955ffd7ffaf7602215d961a11f3adb2e6f1609ca1c53f?apiKey=fe3b0463a8ae420ab1241e00fcde5d70&width=200 200w, https://cdn.builder.io/api/v1/image/assets/TEMP/7415d04f090ef15887d955ffd7ffaf7602215d961a11f3adb2e6f1609ca1c53f?apiKey=fe3b0463a8ae420ab1241e00fcde5d70&width=400 400w, https://cdn.builder.io/api/v1/image/assets/TEMP/7415d04f090ef15887d955ffd7ffaf7602215d961a11f3adb2e6f1609ca1c53f?apiKey=fe3b0463a8ae420ab1241e00fcde5d70&width=800 800w, https://cdn.builder.io/api/v1/image/assets/TEMP/7415d04f090ef15887d955ffd7ffaf7602215d961a11f3adb2e6f1609ca1c53f?apiKey=fe3b0463a8ae420ab1241e00fcde5d70&width=1200 1200w, https://cdn.builder.io/api/v1/image/assets/TEMP/7415d04f090ef15887d955ffd7ffaf7602215d961a11f3adb2e6f1609ca1c53f?apiKey=fe3b0463a8ae420ab1241e00fcde5d70&width=1600 1600w, https://cdn.builder.io/api/v1/image/assets/TEMP/7415d04f090ef15887d955ffd7ffaf7602215d961a11f3adb2e6f1609ca1c53f?apiKey=fe3b0463a8ae420ab1241e00fcde5d70&width=2000 2000w, https://cdn.builder.io/api/v1/image/assets/TEMP/7415d04f090ef15887d955ffd7ffaf7602215d961a11f3adb2e6f1609ca1c53f?apiKey=fe3b0463a8ae420ab1241e00fcde5d70&"
+        className="img-2"
+      />
+      <div className="div-12">Recommended Recipes</div>
     </div>
+  </div>
+  <div>
+    <div>
+      <div className="user-query">
+      <div style={{ height: '10px' }} />
+  <input
+    type="text"
+    value={userQuery}
+    onChange={(e) => setUserQuery(e.target.value)}
+    placeholder="Enter your query"
+  />
+  <button onClick={() => fetchRecipes(userQuery)}>Search</button>
+  <div style={{ height: '20px' }} />
+</div>
+
+<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+<Button
+    onClick={importPreferences}
+    style={{ backgroundColor: '#d97255', borderColor: '#d97255', color: '#ffffff', marginRight: '10px' }}
+  >
+    Import Preferences
+  </Button>
+  <input
+    type="text"
+    value={email}
+    onChange={(e) => setEmail(e.target.value)}
+    placeholder="Enter email"
+    style={{ marginRight: '10px' }}
+  />
+  
+</div>
+<div style={{ height: '20px' }} />
+    </div>
+  </div>
+  <div className="container">
+  <div className="div-13">
+  <div className="div-14">Filters</div>
+  <Button onClick={removeLastIngredient} style={{ backgroundColor: '#d97255', borderColor: '#d97255', color: '#ffffff' }}>Check with Less Ingredients</Button>
+  <div style={{ height: '20px' }} />
+  <Button
+  onClick={() => setShowLikesOnly(!showLikesOnly)}
+  style={{
+    backgroundColor: '#d97255',
+    borderColor: '#d97255',
+    color: '#ffffff'
+  }}
+>
+  {showLikesOnly ? 'Show All Recipes' : 'Show Likes Only'}
+</Button>
+
+  <div className="filter-item">
+    <input type="checkbox" checked={filters.vegetarian} onChange={() => handleFilterChange('vegetarian')} />
+    <label> Vegetarian</label>
+  </div>
+  <div className="filter-item">
+    <input type="checkbox" checked={filters.glutenFree} onChange={() => handleFilterChange('glutenFree')} />
+    <label> Gluten Free</label>
+  </div>
+  <div className="filter-item">
+    <input type="checkbox" checked={filters.noEggs} onChange={() => handleFilterChange('noEggs')} />
+    <label> No Eggs</label>
+  </div>
+  <div className="filter-item">
+    <input type="checkbox" checked={filters.lowFat} onChange={() => handleFilterChange('lowFat')} />
+    <label> Low-Fat</label>
+  </div>
+  <div className="filter-item">
+    <input type="checkbox" checked={filters.highProtein} onChange={() => handleFilterChange('highProtein')} />
+    <label> High-Protein</label>
+  </div>
+  <div className="filter-item">
+    <input type="checkbox" checked={filters.vegan} onChange={() => handleFilterChange('vegan')} />
+    <label> Vegan</label>
+  </div>
+  <div className="filter-item">
+    <input type="checkbox" checked={filters.nutFree} onChange={() => handleFilterChange('nutFree')} />
+    <label> Nut Free</label>
+  </div>
+  <div className="filter-item">
+    <input type="checkbox" checked={filters.lowSodium} onChange={() => handleFilterChange('lowSodium')} />
+    <label> Low Sodium</label>
+  </div>
+</div>
+    <div className="recipe-grid">
+      {loading ? (
+        <Spinner animation="border" role="status">
+          <span className="sr-only">Loading...</span>
+        </Spinner>
+      ) : (
+        <>
+          {recipes &&
+            (showLikesOnly ? likedRecipes.map((uri) => recipes.find((recipe) => recipe.recipe.uri === uri)) : recipes)
+              .filter(filterRecipes)
+              .map((recipe, index) => (
+                <div key={index} className="card-wrapper">
+                  <Card style={{ width: '18rem', display: 'flex', flexDirection: 'column' }}>
+                    <Card.Img variant="top" src={recipe.recipe.image} />
+                    <Card.Body style={{ flexGrow: 1 }}>
+                      <h3 style={{ marginBottom: '10px', color: '#d97255', fontFamily: 'Arial' }}>{recipe.recipe.label}</h3>
+                      <h4>Ingredients</h4>
+                      <ul style={{ listStyle: 'none', padding: 0 }}>
+                        {recipe.recipe.ingredients &&
+                          recipe.recipe.ingredients.map((ingredient, index) => (
+                            <li key={index}>{ingredient.text}</li>
+                          ))}
+                      </ul>
+                    </Card.Body>
+                    <div className="button-group" style={{ marginTop: 'auto', marginBottom: '0px', textAlign: 'center' }}>
+                      <Button variant={likes[recipe.recipe.uri] === 1 ? 'success' : 'outline-success'} onClick={() => handleLike(recipe.recipe.uri)}>
+                        Like
+                      </Button>
+                      <Button
+                        variant="primary"
+                        href={recipe.recipe.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{
+                        marginTop: '10px',
+                        width: '100%',
+                        backgroundColor: '#d97255', // Add this line to set the background color
+                        borderColor: '#d97255', // Add this line to set the border color
+                      }}>
+                      View Preparation
+                      </Button>
+                    </div>
+                  </Card>
+                </div>
+              ))}
+        </>
+      )}
+    </div>
+  </div>
+  <style jsx>{`
+    .div {
+      background-color: #fff;
+      display: flex;
+      padding-bottom: 50px;
+      flex-direction: column;
+      color: #3e2723;
+    }
+    .div-2 {
+      background-color: #f0ece1;
+      display: flex;
+      width: 100%;
+      flex-direction: column;
+      align-items: center;
+      padding: 19px 12px 58px;
+    }
+    @media (max-width: 991px) {
+      .div-2 {
+        max-width: 100%;
+        padding-right: 20px;
+      }
+    }
+    .div-12 {
+      margin-top: 33px;
+      font: 700 54px/107% Raleway, -apple-system, Roboto, Helvetica, sans-serif;
+    }
+    @media (max-width: 991px) {
+      .div-12 {
+        max-width: 100%;
+        font-size: 40px;
+      }
+    }
+    .img-2 {
+      aspect-ratio: 1.25;
+      object-fit: auto;
+      object-position: center;
+      width: 83px;
+      margin-top: 56px;
+    }
+    @media (max-width: 991px) {
+      .img-2 {
+        margin-top: 40px;
+      }
+    }
+    .container {
+      display: flex;
+    }
+    .div-13 {
+      margin-right: 20px;
+      align-self: start;
+      display: flex;
+      flex-direction: column;
+      align-items: start;
+      font-size: 20px;
+      font-weight: 400;
+      line-height: 290%;
+    }
+    @media (max-width: 991px) {
+      .container {
+        flex-direction: column;
+      }
+      .div-13 {
+        margin-right: 0;
+        margin-bottom: 20px;
+      }
+    }
+    .div-14 {
+      align-self: stretch;
+      font: 600 42px/181% Inter, -apple-system, Roboto, Helvetica, sans-serif;
+    }
+    .recipe-grid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      flex: 1;
+    }
+    .card-wrapper {
+      flex: 0 0 calc(33.33% - 20px);
+      margin-bottom: 20px;
+    }
+  `}</style>
+</>
   );
 }
+
