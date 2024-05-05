@@ -1,6 +1,5 @@
 import React from 'react';
 import axios from 'axios';
-import { Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 
 const Logout = ({ handleLogout }) => {
@@ -24,7 +23,9 @@ const Logout = ({ handleLogout }) => {
     };
 
     return (
-        <Button variant="outline-danger" className="float-right" onClick={logout}>Log Out</Button>
+        <span className="navbar__auth-link" style={{ textDecoration: 'none', color: '#3e2723', cursor: 'pointer' }} onClick={logout}>
+            Log Out
+        </span>
     );
 };
 
