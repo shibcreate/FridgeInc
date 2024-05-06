@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import axios from 'axios';
+import Spinner from 'react-bootstrap/Spinner';
 
 export default function CustomList({ isLoggedIn, setIsLoggedIn }) {
     const location = useLocation();
     const { email, name } = location.state || {};
+    const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
     const [customList, setCustomList] = useState([]);
 
@@ -33,6 +35,7 @@ export default function CustomList({ isLoggedIn, setIsLoggedIn }) {
                 }
                 const response = await axios.get(url);
                 setCustomList(response.data);
+                setLoading(false);
             } catch (error) {
                 console.error('Error fetching custom recipes:', error);
             }
@@ -58,30 +61,36 @@ export default function CustomList({ isLoggedIn, setIsLoggedIn }) {
                     value={searchQuery}
                     onChange={handleSearchChange}
                 />
-                <div className="row">
-                    {customList.map((recipe, index) => (
-                        <div key={recipe._id} className="col-lg-4 mb-3">
-                            <div className="card">
-                                <img src={recipe.recipePic} className="card-img-top" alt={recipe.recipeName} />
-                                <div className="card-body">
-                                    <h3 className="card-title">{recipe.recipeName}</h3>
-                                    <h4 className="card-text">Ingredients: <br /></h4>
-                                    <ul style={{ listStyle: 'none', padding: 0 }}>
-                                        {recipe.ingredients && recipe.ingredients.split(',').map((ingredient, index) => (
-                                            <li key={index}>{ingredient.trim()}</li>
-                                        ))}
-                                    </ul>
-                                    <Link 
-                                        to={`/custom-list/${recipe._id}`} 
-                                        className="btn btn-primary" 
-                                        style={{ backgroundColor: '#d97255', borderColor: '#d97255' }}>
-                                        View Recipe
-                                    </Link>
+                {loading ? (
+                    <Spinner animation="border" role="status">
+                        <span className="visually-hidden">Loading...</span>
+                    </Spinner>
+                ) : (
+                    <div className="row">
+                        {customList.map((recipe, index) => (
+                            <div key={recipe._id} className="col-lg-4 mb-3">
+                                <div className="card">
+                                    <img src={recipe.recipePic} className="card-img-top" alt={recipe.recipeName} />
+                                    <div className="card-body">
+                                        <h3 style={{fontFamily: 'Arial', color: '#d97255', marginBottom: '20px'}} className="card-title">{recipe.recipeName}</h3>
+                                        <h4 className="card-text">Ingredients: <br /></h4>
+                                        <ul style={{ listStyle: 'none', padding: 0 }}>
+                                            {recipe.ingredients && recipe.ingredients.split(',').map((ingredient, index) => (
+                                                <li key={index}>{ingredient.trim()}</li>
+                                            ))}
+                                        </ul>
+                                        <Link 
+                                            to={`/custom-list/${recipe._id}`} 
+                                            className="btn btn-primary" 
+                                            style={{ backgroundColor: '#d97255', borderColor: '#d97255' }}>
+                                            View Recipe
+                                        </Link>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    ))}
-                </div>
+                        ))}
+                    </div>
+                )}
             </div>
             <style jsx>{`
                 .div-2 {

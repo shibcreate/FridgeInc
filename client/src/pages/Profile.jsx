@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, Link } from 'react-router-dom';
 import Card from 'react-bootstrap/Card';
 import Form from 'react-bootstrap/Form';
 import axios from 'axios';
@@ -39,7 +39,6 @@ export default function Profile({ isLoggedIn, setIsLoggedIn, updateProfileColor 
 
       if (response.ok) {
         console.log('Diet preference saved successfully');
-        // Optionally, you can redirect the user to another page after saving
       } else {
         console.error('Failed to save diet preference');
       }
@@ -53,10 +52,10 @@ export default function Profile({ isLoggedIn, setIsLoggedIn, updateProfileColor 
       // Save profile picture color and bio to local storage
       localStorage.setItem('userColor', profilePicture);
       localStorage.setItem('userBio', bio);
-  
+
       console.log('Profile Picture Color:', profilePicture);
       console.log('Display preference saved successfully');
-  
+
       // Reload the page to reflect the changes
       window.location.reload();
     } catch (error) {
@@ -66,68 +65,72 @@ export default function Profile({ isLoggedIn, setIsLoggedIn, updateProfileColor 
 
   return (
     <div className="d-flex flex-column align-items-center">
-      <Card style={{ width: '35rem', margin: '40px' }}>
-        <Card.Header style={{ backgroundColor: '#F0ECE1' }}>User Info</Card.Header>
-        <Card.Body>
-          <Card.Text>Email: {email}</Card.Text>
-          <Card.Text>Select Your Diet Preference</Card.Text>
-          <Form.Select
-            aria-label="Default select example"
-            onChange={(e) => setDietPreference(e.target.value)}
-          >
-            <option>No Preference</option>
-            <option value="1">No-Eggs</option>
-            <option value="2">Vegetarian</option>
-            <option value="3">Gluten-Free</option>
-            <option value="4">Low-Fat</option>
-            <option value="5">High-Protein</option>
-            <option value="6">Vegan</option>
-            <option value="7">Nut-Free</option>
-            <option value="8">Low-Sodium</option>
-          </Form.Select>
-          {/* Other profile information */}
-        </Card.Body>
-        <button className="btn btn-primary" style={{ backgroundColor: '#D97255' }} onClick={handleSaveChanges}>
-          Save Changes
-        </button>
-      </Card>
+      {isLoggedIn ? (
+        <>
+          <Card style={{ width: '35rem', margin: '40px' }}>
+            <Card.Header style={{ backgroundColor: '#F0ECE1' }}>User Info</Card.Header>
+            <Card.Body>
+              <Card.Text>Email: {email}</Card.Text>
+              <Card.Text>Select Your Diet Preference</Card.Text>
+              <Form.Select
+                aria-label="Default select example"
+                onChange={(e) => setDietPreference(e.target.value)}
+              >
+                <option>No Preference</option>
+                <option value="1">No-Eggs</option>
+                <option value="2">Vegetarian</option>
+                <option value="3">Gluten-Free</option>
+                <option value="4">Low-Fat</option>
+                <option value="5">High-Protein</option>
+                <option value="6">Vegan</option>
+                <option value="7">Nut-Free</option>
+                <option value="8">Low-Sodium</option>
+              </Form.Select>
+            </Card.Body>
+            <button className="btn btn-primary" style={{ backgroundColor: '#D97255' }} onClick={handleSaveChanges}>
+              Save Changes
+            </button>
+          </Card>
 
-      <Card style={{ width: '35rem', margin: '40px' }}>
-        <Card.Header style={{ backgroundColor: '#F0ECE1' }}>Public Display</Card.Header>
-        <br></br>
-        <Card.Body>
-          <Form.Group controlId="profilePicture">
-            <Form.Label>Profile Picture</Form.Label>
-            <Form.Select
-              aria-label="Select color"
-              onChange={(e) => setProfilePicture(e.target.value)}
-            >
-              <option>Select Your Color</option>
-              <option value="Tomato">red</option>
-              <option value="Orange">yellow</option>
-              <option value="YellowGreen">green</option>
-              <option value="CornflowerBlue">blue</option>
-              <option value="Orchid">purple</option>
-            </Form.Select>
-          </Form.Group>
-          <br></br>
-          <Form.Group controlId="bio">
-            <Form.Label>Bio</Form.Label>
-            <Form.Control
-              as="textarea"
-              rows={3}
-              value={bio}
-              onChange={(e) => setBio(e.target.value)}
-              placeholder="Start typing here..."
-            />
-          </Form.Group>
-          <Card.Text><i>Changes apply after refreshing</i></Card.Text>
-        </Card.Body>
-        <button className="btn btn-primary" style={{ backgroundColor: '#D97255' }} onClick={handleDisplayChanges}>
-          Save Changes
-        </button>
-        {/* Using a button instead of Link for form submission */}
-      </Card>
+          <Card style={{ width: '35rem', margin: '40px' }}>
+            <Card.Header style={{ backgroundColor: '#F0ECE1' }}>Public Display</Card.Header>
+            <br></br>
+            <Card.Body>
+              <Form.Group controlId="profilePicture">
+                <Form.Label>Profile Picture</Form.Label>
+                <Form.Select
+                  aria-label="Select color"
+                  onChange={(e) => setProfilePicture(e.target.value)}
+                >
+                  <option>Select Your Color</option>
+                  <option value="Tomato">red</option>
+                  <option value="Orange">yellow</option>
+                  <option value="YellowGreen">green</option>
+                  <option value="CornflowerBlue">blue</option>
+                  <option value="Orchid">purple</option>
+                </Form.Select>
+              </Form.Group>
+              <br></br>
+              <Form.Group controlId="bio">
+                <Form.Label>Bio</Form.Label>
+                <Form.Control
+                  as="textarea"
+                  rows={3}
+                  value={bio}
+                  onChange={(e) => setBio(e.target.value)}
+                  placeholder="Start typing here..."
+                />
+              </Form.Group>
+              <Card.Text><i>Changes apply after refreshing</i></Card.Text>
+            </Card.Body>
+            <button className="btn btn-primary" style={{ backgroundColor: '#D97255' }} onClick={handleDisplayChanges}>
+              Save Changes
+            </button>
+          </Card>
+        </>
+      ) : (
+        <h5 style={{margin: '20px', fontFamily: 'Arial, Helvetica, sans-serif'}}>Please log in or create an account</h5> 
+      )}
     </div>
   );
 }

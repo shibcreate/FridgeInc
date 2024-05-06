@@ -167,7 +167,7 @@ app.get('/upload-custom-list/:id', async (req, res) => {
   }
 });
 
-app.get('/custom-list/posts', async (req, res) => {
+app.get('/posts', async (req, res) => {
   try {
     const userId = req.user ? req.user._id : null;
     const userPosts = await CustomModel.find({ user: userId});
@@ -181,7 +181,7 @@ app.get('/custom-list/posts', async (req, res) => {
   }
 });
 
-app.get('/custom-list/posts/:postId', async (req, res) => {
+app.get('/posts/:postId', async (req, res) => {
   const postId = req.params.postId;
   try {
     const post = await CustomModel.findById(postId);
@@ -197,7 +197,7 @@ app.get('/custom-list/posts/:postId', async (req, res) => {
 });
 
 
-app.put('/custom-list/posts/:postId', async (req, res) => {
+app.put('/posts/:postId', async (req, res) => {
   const postId = req.params.postId;
   const updatedData = req.body;
   try {
@@ -212,7 +212,7 @@ app.put('/custom-list/posts/:postId', async (req, res) => {
   }
 });
 
-app.delete('/custom-list/posts/:postId', async (req, res) => {
+app.delete('/posts/:postId', async (req, res) => {
   const postId = req.params.postId;
   try {
     const deletedPost = await CustomModel.findByIdAndDelete(postId);

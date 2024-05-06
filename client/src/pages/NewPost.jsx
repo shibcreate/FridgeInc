@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
@@ -11,6 +11,7 @@ export default function NewPost({ isLoggedIn, setIsLoggedIn }) {
     const [recipePic, setRecipePic] = useState('');
     const [ingredients, setIngredients] = useState('');
     const [recipeText, setRecipeText] = useState('');
+    const navigate = useNavigate();
 
     useEffect(() => {
         const checkAuthentication = async () => {
@@ -43,6 +44,7 @@ export default function NewPost({ isLoggedIn, setIsLoggedIn }) {
     
             if (response.status === 200) {
                 console.log('Custom recipe saved successfully!');
+                navigate('/posts')
             } else {
                 console.error('Failed to save custom recipe :(');
             }
@@ -113,7 +115,7 @@ export default function NewPost({ isLoggedIn, setIsLoggedIn }) {
                         </Button>
                     </Form>
                 ) : (
-                    <h5>Please join us to share your recipes.</h5>
+                    <h5 style={{margin: '20px', fontFamily: 'Arial, Helvetica, sans-serif'}}>Please join us to share your recipes.</h5>
                 )}
             </div>
             <style jsx>{`

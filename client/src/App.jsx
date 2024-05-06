@@ -51,8 +51,8 @@ function App() {
             <Route path="/custom-list" element={<CustomList isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn}/>} /> 
             <Route path="/custom-list/:id" element={<CustomDetail />} />
             <Route path="/share-recipe" element={<NewPost isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />} /> {/* protected route */}
-            <Route path="/custom-list/posts" element={<Posts isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn}/>} />
-            <Route path="/custom-list/posts/:postId" element={<EditPost isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn}/>} />
+            <Route path="/posts" element={<Posts isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn}/>} />
+            <Route path="/posts/:postId" element={<EditPost isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn}/>} />
           </Routes>
         </main>
         <Footer />

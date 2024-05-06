@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import Logout from '../pages/Logout';
 
 export default function CustomNavbar({ isLoggedIn, handleLogout }) {
@@ -31,34 +31,38 @@ export default function CustomNavbar({ isLoggedIn, handleLogout }) {
             className="navbar__logo"
             alt="Logo"
           />
-          <Link
-            to="http://localhost:5173/#"
+          <NavLink
+            to="/"
             className="navbar__link"
             style={{ textDecoration: 'none', color: '#3e2723' }}
+            activeclassName="active" 
           >
             Home
-          </Link>
-          <Link
+          </NavLink>
+          <NavLink
             to="/recipes"
             className="navbar__link"
             style={{ textDecoration: 'none', color: '#3e2723' }}
+            activeclassName="active" 
           >
             Recipes
-          </Link>
-          <Link
+          </NavLink>
+          <NavLink
             to="/custom-list"
             className="navbar__link"
             style={{ textDecoration: 'none', color: '#3e2723' }}
+            activeclassName="active" 
           >
             Custom Recipes
-          </Link>
-          <Link
+          </NavLink>
+          <NavLink
             to="/upload"
             className="navbar__link"
             style={{ textDecoration: 'none', color: '#3e2723' }}
+            activeclassName="active" 
           >
             Upload
-          </Link>
+          </NavLink>
           {/* Render colored div next to Uploads link */}
           {isLoggedIn && (
             <div
@@ -78,25 +82,30 @@ export default function CustomNavbar({ isLoggedIn, handleLogout }) {
           {isLoggedIn ? (
             <Logout handleLogout={handleLogout} />
           ) : (
-            <Link
+            <NavLink
               to="/login"
               className="navbar__auth-link"
               style={{ textDecoration: 'none', color: '#3e2723' }}
+              activeclassName="active" 
             >
               Log In
-            </Link>
+            </NavLink>
           )}
           {/* Conditionally render the Sign Up button */}
           {isLoggedIn ? (
             <>
-              <Link to="/custom-list/posts" style={{ textDecoration: 'none', color: '#fff' }}>
+              <NavLink to="/posts" 
+              style={{ textDecoration: 'none', color: '#fff' }} 
+              activeclassName="active" >
                 <div className="navbar__auth-button">Posts</div>
-              </Link>
+              </NavLink>
             </>
           ) : (
-            <Link to="/register" style={{ textDecoration: 'none', color: '#fff' }}>
+            <NavLink to="/register" 
+            style={{ textDecoration: 'none', color: '#fff' }}
+            activeclassName="active" >
               <div className="navbar__auth-button">Sign Up</div>
-            </Link>
+            </NavLink>
           )}
         </div>
       </div>
@@ -144,6 +153,7 @@ export default function CustomNavbar({ isLoggedIn, handleLogout }) {
         .navbar__link {
           font-family: Inter, sans-serif;
           margin: auto 0;
+          font-size: 16px;
         }
 
         .navbar__auth-container {
@@ -176,6 +186,9 @@ export default function CustomNavbar({ isLoggedIn, handleLogout }) {
           .navbar__auth-button {
             padding: 0 20px;
           }
+        }
+        .navbar__link.active {
+          font-weight: bold;
         }
       `}</style>
     </>

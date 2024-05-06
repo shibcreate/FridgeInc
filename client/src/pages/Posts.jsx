@@ -26,8 +26,8 @@ function UserPosts({ isLoggedIn, setIsLoggedIn }) {
     useEffect(() => {
         async function fetchUserPosts() {
             try {
-                const response = await axios.get('http://localhost:3001/custom-list/posts', 
-                { withCredentials: true, });
+                const response = await axios.get('http://localhost:3001/posts',
+                    { withCredentials: true, });
                 setPosts(response.data.posts);
                 console.log('Successfully fetch users posts')
             } catch (error) {
@@ -39,7 +39,8 @@ function UserPosts({ isLoggedIn, setIsLoggedIn }) {
 
     const deletePost = async (postId) => {
         try {
-            const response = await axios.delete(`http://localhost:3001/custom-list/posts/${postId}`, { withCredentials: true });
+            const response = await axios.delete(`http://localhost:3001/posts/${postId}`,
+                { withCredentials: true });
             if (response.status === 200) {
                 // Remove the deleted post from the state
                 setPosts(posts.filter(post => post._id !== postId));
@@ -70,7 +71,7 @@ function UserPosts({ isLoggedIn, setIsLoggedIn }) {
                                 <div className="card" style={{ padding: '10px' }}>
                                     <img src={post.recipePic} className="card-img-top" alt={post.recipePic} />
                                     <div className="card-body">
-                                        <h3 className="card-title">{post.recipeName}</h3>
+                                        <h3 className="card-title" style={{ fontFamily: 'Arial', color: '#d97255', marginBottom: '15px' }}>{post.recipeName}</h3>
                                         <h4 className="card-text"> Ingredients: </h4>
 
                                         <ul style={{ listStyle: 'none', padding: 0 }}>
@@ -80,12 +81,12 @@ function UserPosts({ isLoggedIn, setIsLoggedIn }) {
                                         </ul>
 
                                         <h4 className="card-text"> Preparation: <br></br> </h4>
-                                        <p style={{ whiteSpace: 'pre-line' }}> {post.recipeText.length > maxPreparationLength ? 
-                                post.recipeText.substring(0, maxPreparationLength) + '...' : 
-                                post.recipeText
-                            }</p>
+                                        <p style={{ whiteSpace: 'pre-line' }}> {post.recipeText.length > maxPreparationLength ?
+                                            post.recipeText.substring(0, maxPreparationLength) + '...' :
+                                            post.recipeText
+                                        }</p>
                                     </div>
-                                    <Link to={`/custom-list/posts/${post._id}`} className="btn btn-info mr-2">Edit Details</Link>
+                                    <Link to={`/posts/${post._id}`} className="btn btn-info mr-2">Edit Details</Link>
                                     <Button variant="danger" style={{ marginTop: '10px', width: '100%' }} onClick={() => deletePost(post._id)}>Delete</Button>
                                 </div>
                             </div>

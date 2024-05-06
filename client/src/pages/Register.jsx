@@ -1,13 +1,28 @@
 import * as React from "react";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 
-export default function MyComponent() {
+export default function Register({isLoggedIn, setIsLoggedIn}) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordType, setPasswordType] = useState("password");
 
+  useEffect(() => {
+    const checkAuthentication = async () => {
+      try {
+        const response = await axios.get('http://localhost:3001/authorized', {
+          withCredentials: true
+        });
+        if (response.status === 200) {
+          setIsLoggedIn(true);
+        }
+      } catch (error) {
+        setIsLoggedIn(false);
+      }
+    };
+    checkAuthentication();
+  }, [isLoggedIn]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -34,6 +49,12 @@ export default function MyComponent() {
       console.error('Error:', error);
     }
   };
+
+  if(isLoggedIn) {
+    return (
+      <h5 style={{margin: '20px', fontFamily: 'Arial, Helvetica, sans-serif'}}>You are already logged in; if you wish to create a new account, please log out first</h5>
+    )
+  }
 
   return (
     <form onSubmit={handleSubmit}>

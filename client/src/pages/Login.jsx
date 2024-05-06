@@ -1,13 +1,29 @@
 import * as React from "react";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 
-export default function MyComponent() {
+export default function Login({isLoggedIn, setIsLoggedIn}) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordType, setPasswordType] = useState("password");
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const checkAuthentication = async () => {
+      try {
+        const response = await axios.get('http://localhost:3001/authorized', {
+          withCredentials: true
+        });
+        if (response.status === 200) {
+          setIsLoggedIn(true);
+        }
+      } catch (error) {
+        setIsLoggedIn(false);
+      }
+    };
+    checkAuthentication();
+  }, [isLoggedIn]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -28,6 +44,11 @@ export default function MyComponent() {
     }
   };
 
+  if(isLoggedIn) {
+    return (
+      <h5 style={{margin: '20px', fontFamily: 'Arial, Helvetica, sans-serif'}}>You are already logged in</h5>
+    )
+  }
   return (
     <>
       <div className="div">

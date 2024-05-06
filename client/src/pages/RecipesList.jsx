@@ -8,7 +8,7 @@ const APP_ID = '41d4abc9';
 const APP_KEY = 'efc1af159e76c89641e1fadf0876a50e';
 const DEFAULT_QUERY = 'popular'; // Default search query
 
-export default function RecipesList() {
+export default function RecipesList({ isLoggedIn, setIsLoggedIn }) {
   const [recipes, setRecipes] = useState([]);
   const [loading, setLoading] = useState(true); // State to track loading status
   const [filters, setFilters] = useState({
@@ -25,33 +25,32 @@ export default function RecipesList() {
   const [likes, setLikes] = useState({});
   const [likedRecipes, setLikedRecipes] = useState([]);
   const [showLikesOnly, setShowLikesOnly] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userQuery, setUserQuery] = useState('');
   const [formattedIngredients, setFormattedIngredients] = useState('');
 
   const removeLastIngredient = async () => {
     // Update formattedIngredients with the value from localStorage
     const formattedIngredients = localStorage.getItem('formattedIngredients') || '';
-  
+
     if (!formattedIngredients) {
       console.log('No ingredients to remove.');
       return;
     }
-  
+
     const ingredientsArray = formattedIngredients.split(',');
-    
+
     if (ingredientsArray.length > 1) {
       ingredientsArray.pop();
       ingredientsArray.pop();
     }
-    
+
     const newFormattedIngredients = ingredientsArray.map(ingredient => ingredient.trim()).join(', ');
-    console.log('New ingredients:', newFormattedIngredients); 
+    console.log('New ingredients:', newFormattedIngredients);
     setFormattedIngredients(newFormattedIngredients);
-    
+
     // Save the updated ingredients list to localStorage
     localStorage.setItem('formattedIngredients', newFormattedIngredients);
-    
+
     // Fetch new recipes with the updated ingredients list only if it's not empty
     if (newFormattedIngredients !== '') {
       await fetchRecipes(newFormattedIngredients);
@@ -63,32 +62,40 @@ export default function RecipesList() {
 
   useEffect(() => {
     const checkAuthentication = async () => {
-      if (isLoggedIn) {
-        const storedDefaultQuery = localStorage.getItem('formattedIngredients');
-        fetchRecipes(storedDefaultQuery ? storedDefaultQuery : DEFAULT_QUERY);
-      }
       try {
-        const response = await axios.get('http://localhost:3001/recipes', {
-          withCredentials: true,
+        const response = await axios.get('http://localhost:3001/authorized', {
+          withCredentials: true
         });
-        if (response.data === 'recipe list') {
+        if (response.status === 200) {
           setIsLoggedIn(true);
-          console.log('Recipes page access successfully!');
+          console.log('Authorized user')
         }
       } catch (error) {
         setIsLoggedIn(false);
-        console.log('Failed to access recipes page!');
+        console.log('User not authorized')
       }
     };
     checkAuthentication();
-  }, []);
+  }, [isLoggedIn]);
+
+  const getRecipes = async () => {
+    try {
+      const response = await axios.get('http://localhost:3001/recipes', {
+        withCredentials: true
+      });
+      if (response.data === 'recipe list') {
+        console.log('Recipes page access successfully!')
+      }
+    } catch (error) {
+      console.log('Failted to access recipes page!')
+    }
+  };
 
   useEffect(() => {
-    if (isLoggedIn) {
-      const storedDefaultQuery = localStorage.getItem('formattedIngredients');
-      fetchRecipes(storedDefaultQuery ? storedDefaultQuery : DEFAULT_QUERY);
-    }
-  }, [isLoggedIn]);
+    const storedDefaultQuery = localStorage.getItem('formattedIngredients');
+    fetchRecipes(storedDefaultQuery ? storedDefaultQuery : DEFAULT_QUERY);
+  });
+
 
   const fetchRecipes = async (query) => {
     try {
@@ -129,7 +136,7 @@ export default function RecipesList() {
     if (showLikesOnly && !likedRecipes.includes(recipe.recipe.uri)) {
       return false; // Show only liked recipes if showLikesOnly is true
     }
-  
+
     // Check each filter separately
     if (filters.noEggs && recipe.recipe.ingredients.some((ingredient) => ingredient.text.toLowerCase().includes('egg'))) {
       return false;
@@ -155,7 +162,7 @@ export default function RecipesList() {
     if (filters.lowSodium && !recipe.recipe.healthLabels.includes('Low-Sodium')) {
       return false;
     }
-  
+
     return true;
   };
 
@@ -183,148 +190,148 @@ export default function RecipesList() {
 
   return (
     <>
-  <div className="div">
-    <div className="div-2">
-      <img
-        loading="lazy"
-        srcSet="https://cdn.builder.io/api/v1/image/assets/TEMP/7415d04f090ef15887d955ffd7ffaf7602215d961a11f3adb2e6f1609ca1c53f?apiKey=fe3b0463a8ae420ab1241e00fcde5d70&width=100 100w, https://cdn.builder.io/api/v1/image/assets/TEMP/7415d04f090ef15887d955ffd7ffaf7602215d961a11f3adb2e6f1609ca1c53f?apiKey=fe3b0463a8ae420ab1241e00fcde5d70&width=200 200w, https://cdn.builder.io/api/v1/image/assets/TEMP/7415d04f090ef15887d955ffd7ffaf7602215d961a11f3adb2e6f1609ca1c53f?apiKey=fe3b0463a8ae420ab1241e00fcde5d70&width=400 400w, https://cdn.builder.io/api/v1/image/assets/TEMP/7415d04f090ef15887d955ffd7ffaf7602215d961a11f3adb2e6f1609ca1c53f?apiKey=fe3b0463a8ae420ab1241e00fcde5d70&width=800 800w, https://cdn.builder.io/api/v1/image/assets/TEMP/7415d04f090ef15887d955ffd7ffaf7602215d961a11f3adb2e6f1609ca1c53f?apiKey=fe3b0463a8ae420ab1241e00fcde5d70&width=1200 1200w, https://cdn.builder.io/api/v1/image/assets/TEMP/7415d04f090ef15887d955ffd7ffaf7602215d961a11f3adb2e6f1609ca1c53f?apiKey=fe3b0463a8ae420ab1241e00fcde5d70&width=1600 1600w, https://cdn.builder.io/api/v1/image/assets/TEMP/7415d04f090ef15887d955ffd7ffaf7602215d961a11f3adb2e6f1609ca1c53f?apiKey=fe3b0463a8ae420ab1241e00fcde5d70&width=2000 2000w, https://cdn.builder.io/api/v1/image/assets/TEMP/7415d04f090ef15887d955ffd7ffaf7602215d961a11f3adb2e6f1609ca1c53f?apiKey=fe3b0463a8ae420ab1241e00fcde5d70&"
-        className="img-2"
-      />
-      <div className="div-12">Recommended Recipes</div>
-    </div>
-  </div>
-  <div>
-    <div>
-      <div className="user-query">
-      <div style={{ height: '10px' }} />
-  <input
-    type="text"
-    value={userQuery}
-    onChange={(e) => setUserQuery(e.target.value)}
-    placeholder="Enter your query"
-  />
-  <button onClick={() => fetchRecipes(userQuery)}>Search</button>
-  <div style={{ height: '20px' }} />
-</div>
+      <div className="div">
+        <div className="div-2">
+          <img
+            loading="lazy"
+            srcSet="https://cdn.builder.io/api/v1/image/assets/TEMP/7415d04f090ef15887d955ffd7ffaf7602215d961a11f3adb2e6f1609ca1c53f?apiKey=fe3b0463a8ae420ab1241e00fcde5d70&width=100 100w, https://cdn.builder.io/api/v1/image/assets/TEMP/7415d04f090ef15887d955ffd7ffaf7602215d961a11f3adb2e6f1609ca1c53f?apiKey=fe3b0463a8ae420ab1241e00fcde5d70&width=200 200w, https://cdn.builder.io/api/v1/image/assets/TEMP/7415d04f090ef15887d955ffd7ffaf7602215d961a11f3adb2e6f1609ca1c53f?apiKey=fe3b0463a8ae420ab1241e00fcde5d70&width=400 400w, https://cdn.builder.io/api/v1/image/assets/TEMP/7415d04f090ef15887d955ffd7ffaf7602215d961a11f3adb2e6f1609ca1c53f?apiKey=fe3b0463a8ae420ab1241e00fcde5d70&width=800 800w, https://cdn.builder.io/api/v1/image/assets/TEMP/7415d04f090ef15887d955ffd7ffaf7602215d961a11f3adb2e6f1609ca1c53f?apiKey=fe3b0463a8ae420ab1241e00fcde5d70&width=1200 1200w, https://cdn.builder.io/api/v1/image/assets/TEMP/7415d04f090ef15887d955ffd7ffaf7602215d961a11f3adb2e6f1609ca1c53f?apiKey=fe3b0463a8ae420ab1241e00fcde5d70&width=1600 1600w, https://cdn.builder.io/api/v1/image/assets/TEMP/7415d04f090ef15887d955ffd7ffaf7602215d961a11f3adb2e6f1609ca1c53f?apiKey=fe3b0463a8ae420ab1241e00fcde5d70&width=2000 2000w, https://cdn.builder.io/api/v1/image/assets/TEMP/7415d04f090ef15887d955ffd7ffaf7602215d961a11f3adb2e6f1609ca1c53f?apiKey=fe3b0463a8ae420ab1241e00fcde5d70&"
+            className="img-2"
+          />
+          <div className="div-12">Recommended Recipes</div>
+        </div>
+      </div>
+      <div>
+        <div>
+          <div className="user-query">
+            <div style={{ height: '10px' }} />
+            <input
+              type="text"
+              value={userQuery}
+              onChange={(e) => setUserQuery(e.target.value)}
+              placeholder="Enter your query"
+            />
+            <button onClick={() => fetchRecipes(userQuery)}>Search</button>
+            <div style={{ height: '20px' }} />
+          </div>
 
-<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-<Button
-    onClick={importPreferences}
-    style={{ backgroundColor: '#d97255', borderColor: '#d97255', color: '#ffffff', marginRight: '10px' }}
-  >
-    Import Preferences
-  </Button>
-  <input
-    type="text"
-    value={email}
-    onChange={(e) => setEmail(e.target.value)}
-    placeholder="Enter email"
-    style={{ marginRight: '10px' }}
-  />
-  
-</div>
-<div style={{ height: '20px' }} />
-    </div>
-  </div>
-  <div className="container">
-  <div className="div-13">
-  <div className="div-14">Filters</div>
-  <Button onClick={removeLastIngredient} style={{ backgroundColor: '#d97255', borderColor: '#d97255', color: '#ffffff' }}>Check with Less Ingredients</Button>
-  <div style={{ height: '20px' }} />
-  <Button
-  onClick={() => setShowLikesOnly(!showLikesOnly)}
-  style={{
-    backgroundColor: '#d97255',
-    borderColor: '#d97255',
-    color: '#ffffff'
-  }}
->
-  {showLikesOnly ? 'Show All Recipes' : 'Show Likes Only'}
-</Button>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Button
+              onClick={importPreferences}
+              style={{ backgroundColor: '#d97255', borderColor: '#d97255', color: '#ffffff', marginRight: '10px' }}
+            >
+              Import Preferences
+            </Button>
+            <input
+              type="text"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Enter email"
+              style={{ marginRight: '10px' }}
+            />
 
-  <div className="filter-item">
-    <input type="checkbox" checked={filters.vegetarian} onChange={() => handleFilterChange('vegetarian')} />
-    <label> Vegetarian</label>
-  </div>
-  <div className="filter-item">
-    <input type="checkbox" checked={filters.glutenFree} onChange={() => handleFilterChange('glutenFree')} />
-    <label> Gluten Free</label>
-  </div>
-  <div className="filter-item">
-    <input type="checkbox" checked={filters.noEggs} onChange={() => handleFilterChange('noEggs')} />
-    <label> No Eggs</label>
-  </div>
-  <div className="filter-item">
-    <input type="checkbox" checked={filters.lowFat} onChange={() => handleFilterChange('lowFat')} />
-    <label> Low-Fat</label>
-  </div>
-  <div className="filter-item">
-    <input type="checkbox" checked={filters.highProtein} onChange={() => handleFilterChange('highProtein')} />
-    <label> High-Protein</label>
-  </div>
-  <div className="filter-item">
-    <input type="checkbox" checked={filters.vegan} onChange={() => handleFilterChange('vegan')} />
-    <label> Vegan</label>
-  </div>
-  <div className="filter-item">
-    <input type="checkbox" checked={filters.nutFree} onChange={() => handleFilterChange('nutFree')} />
-    <label> Nut Free</label>
-  </div>
-  <div className="filter-item">
-    <input type="checkbox" checked={filters.lowSodium} onChange={() => handleFilterChange('lowSodium')} />
-    <label> Low Sodium</label>
-  </div>
-</div>
-    <div className="recipe-grid">
-      {loading ? (
-        <Spinner animation="border" role="status">
-          <span className="sr-only">Loading...</span>
-        </Spinner>
-      ) : (
-        <>
-          {recipes &&
-            (showLikesOnly ? likedRecipes.map((uri) => recipes.find((recipe) => recipe.recipe.uri === uri)) : recipes)
-              .filter(filterRecipes)
-              .map((recipe, index) => (
-                <div key={index} className="card-wrapper">
-                  <Card style={{ width: '18rem', display: 'flex', flexDirection: 'column' }}>
-                    <Card.Img variant="top" src={recipe.recipe.image} />
-                    <Card.Body style={{ flexGrow: 1 }}>
-                      <h3 style={{ marginBottom: '10px', color: '#d97255', fontFamily: 'Arial' }}>{recipe.recipe.label}</h3>
-                      <h4>Ingredients</h4>
-                      <ul style={{ listStyle: 'none', padding: 0 }}>
-                        {recipe.recipe.ingredients &&
-                          recipe.recipe.ingredients.map((ingredient, index) => (
-                            <li key={index}>{ingredient.text}</li>
-                          ))}
-                      </ul>
-                    </Card.Body>
-                    <div className="button-group" style={{ marginTop: 'auto', marginBottom: '0px', textAlign: 'center' }}>
-                      <Button variant={likes[recipe.recipe.uri] === 1 ? 'success' : 'outline-success'} onClick={() => handleLike(recipe.recipe.uri)}>
-                        Like
-                      </Button>
-                      <Button
-                        variant="primary"
-                        href={recipe.recipe.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        style={{
-                        marginTop: '10px',
-                        width: '100%',
-                        backgroundColor: '#d97255', // Add this line to set the background color
-                        borderColor: '#d97255', // Add this line to set the border color
-                      }}>
-                      View Preparation
-                      </Button>
+          </div>
+          <div style={{ height: '20px' }} />
+        </div>
+      </div>
+      <div className="container">
+        <div className="div-13">
+          <div className="div-14">Filters</div>
+          <Button onClick={removeLastIngredient} style={{ backgroundColor: '#d97255', borderColor: '#d97255', color: '#ffffff' }}>Check with Less Ingredients</Button>
+          <div style={{ height: '20px' }} />
+          <Button
+            onClick={() => setShowLikesOnly(!showLikesOnly)}
+            style={{
+              backgroundColor: '#d97255',
+              borderColor: '#d97255',
+              color: '#ffffff'
+            }}
+          >
+            {showLikesOnly ? 'Show All Recipes' : 'Show Likes Only'}
+          </Button>
+
+          <div className="filter-item">
+            <input type="checkbox" checked={filters.vegetarian} onChange={() => handleFilterChange('vegetarian')} />
+            <label> Vegetarian</label>
+          </div>
+          <div className="filter-item">
+            <input type="checkbox" checked={filters.glutenFree} onChange={() => handleFilterChange('glutenFree')} />
+            <label> Gluten Free</label>
+          </div>
+          <div className="filter-item">
+            <input type="checkbox" checked={filters.noEggs} onChange={() => handleFilterChange('noEggs')} />
+            <label> No Eggs</label>
+          </div>
+          <div className="filter-item">
+            <input type="checkbox" checked={filters.lowFat} onChange={() => handleFilterChange('lowFat')} />
+            <label> Low-Fat</label>
+          </div>
+          <div className="filter-item">
+            <input type="checkbox" checked={filters.highProtein} onChange={() => handleFilterChange('highProtein')} />
+            <label> High-Protein</label>
+          </div>
+          <div className="filter-item">
+            <input type="checkbox" checked={filters.vegan} onChange={() => handleFilterChange('vegan')} />
+            <label> Vegan</label>
+          </div>
+          <div className="filter-item">
+            <input type="checkbox" checked={filters.nutFree} onChange={() => handleFilterChange('nutFree')} />
+            <label> Nut Free</label>
+          </div>
+          <div className="filter-item">
+            <input type="checkbox" checked={filters.lowSodium} onChange={() => handleFilterChange('lowSodium')} />
+            <label> Low Sodium</label>
+          </div>
+        </div>
+        <div className="recipe-grid">
+          {loading ? (
+            <Spinner animation="border" role="status">
+              <span className="sr-only">Loading...</span>
+            </Spinner>
+          ) : (
+            <>
+              {recipes &&
+                (showLikesOnly ? likedRecipes.map((uri) => recipes.find((recipe) => recipe.recipe.uri === uri)) : recipes)
+                  .filter(filterRecipes)
+                  .map((recipe, index) => (
+                    <div key={index} className="card-wrapper">
+                      <Card style={{ width: '18rem', display: 'flex', flexDirection: 'column' }}>
+                        <Card.Img variant="top" src={recipe.recipe.image} />
+                        <Card.Body style={{ flexGrow: 1 }}>
+                          <h3 style={{ marginBottom: '10px', color: '#d97255', fontFamily: 'Arial' }}>{recipe.recipe.label}</h3>
+                          <h4>Ingredients</h4>
+                          <ul style={{ listStyle: 'none', padding: 0 }}>
+                            {recipe.recipe.ingredients &&
+                              recipe.recipe.ingredients.map((ingredient, index) => (
+                                <li key={index}>{ingredient.text}</li>
+                              ))}
+                          </ul>
+                        </Card.Body>
+                        <div className="button-group" style={{ marginTop: 'auto', marginBottom: '0px', textAlign: 'center' }}>
+                          <Button variant={likes[recipe.recipe.uri] === 1 ? 'success' : 'outline-success'} onClick={() => handleLike(recipe.recipe.uri)}>
+                            Like
+                          </Button>
+                          <Button
+                            variant="primary"
+                            href={recipe.recipe.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{
+                              marginTop: '10px',
+                              width: '100%',
+                              backgroundColor: '#d97255', // Add this line to set the background color
+                              borderColor: '#d97255', // Add this line to set the border color
+                            }}>
+                            View Preparation
+                          </Button>
+                        </div>
+                      </Card>
                     </div>
-                  </Card>
-                </div>
-              ))}
-        </>
-      )}
-    </div>
-  </div>
-  <style jsx>{`
+                  ))}
+            </>
+          )}
+        </div>
+      </div>
+      <style jsx>{`
     .div {
       background-color: #fff;
       display: flex;
@@ -405,7 +412,7 @@ export default function RecipesList() {
       margin-bottom: 20px;
     }
   `}</style>
-</>
+    </>
   );
 }
 

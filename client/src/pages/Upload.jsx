@@ -1,10 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-export default function MyComponent() {
+export default function Upload({ isLoggedIn, setIsLoggedIn }) {
   const [image, setImage] = useState(null);
   const [finalIngredients, setFinalIngredients] = useState([]);
   const [newIngredientName, setNewIngredientName] = useState('');
+
+  useEffect(() => {
+    const checkAuthentication = async () => {
+      try {
+        const response = await axios.get('http://localhost:3001/authorized', {
+          withCredentials: true
+        });
+        if (response.status === 200) {
+          setIsLoggedIn(true);
+        }
+      } catch (error) {
+        setIsLoggedIn(false);
+      }
+    };
+    checkAuthentication();
+  }, [isLoggedIn]);
 
   const handleImageUpload = () => {
     // Trigger file input click
@@ -14,10 +30,10 @@ export default function MyComponent() {
   const handleFileChange = async (event) => {
     const file = event.target.files[0];
     const reader = new FileReader();
-  
+
     reader.onloadend = async () => {
       const imageData = reader.result;
-  
+
       try {
         const response = await axios({
           method: 'POST',
@@ -30,7 +46,7 @@ export default function MyComponent() {
             'Content-Type': 'application/x-www-form-urlencoded',
           },
         });
-  
+
         setImage(imageData);
         setFinalIngredients(
           response.data.predictions.map((prediction) => ({
@@ -38,28 +54,28 @@ export default function MyComponent() {
             confidence: prediction.confidence,
           }))
         );
-  
+
         // Image display logic
         const uploadedImage = new Image();
         uploadedImage.onload = () => {
           // Calculate the aspect ratio
           const aspectRatio = uploadedImage.width / uploadedImage.height;
-  
+
           // Calculate the new width based on the desired height (500px)
           const newWidth = 500 * aspectRatio;
-  
+
           // Set the uploaded image to div-24 with the new size
           document.querySelector('.div-24').style.backgroundImage = `url(${reader.result})`;
           document.querySelector('.div-24').style.width = `${newWidth}px`;
           document.querySelector('.div-24').style.height = `500px`;
         };
         uploadedImage.src = reader.result;
-  
+
       } catch (error) {
         console.log(error.message);
       }
     };
-  
+
     if (file) {
       reader.readAsDataURL(file);
     }
@@ -109,47 +125,53 @@ export default function MyComponent() {
 
   return (
     <>
-      <div className="div">
-        <div className="div-2">
-          <div className="div-3">
-            <img
-              loading="lazy"
-              srcSet="https://cdn.builder.io/api/v1/image/assets/TEMP/9addeacb63b0071ba1e9a3cab5e21ba122fb1ae3e6720e0811c299cdc8f06edb?apiKey=fe3b0463a8ae420ab1241e00fcde5d70&width=100 100w, https://cdn.builder.io/api/v1/image/assets/TEMP/9addeacb63b0071ba1e9a3cab5e21ba122fb1ae3e6720e0811c299cdc8f06edb?apiKey=fe3b0463a8ae420ab1241e00fcde5d70&width=200 200w, https://cdn.builder.io/api/v1/image/assets/TEMP/9addeacb63b0071ba1e9a3cab5e21ba122fb1ae3e6720e0811c299cdc8f06edb?apiKey=fe3b0463a8ae420ab1241e00fcde5d70&width=400 400w, https://cdn.builder.io/api/v1/image/assets/TEMP/9addeacb63b0071ba1e9a3cab5e21ba122fb1ae3e6720e0811c299cdc8f06edb?apiKey=fe3b0463a8ae420ab1241e00fcde5d70&width=800 800w, https://cdn.builder.io/api/v1/image/assets/TEMP/9addeacb63b0071ba1e9a3cab5e21ba122fb1ae3e6720e0811c299cdc8f06edb?apiKey=fe3b0463a8ae420ab1241e00fcde5d70&width=1200 1200w, https://cdn.builder.io/api/v1/image/assets/TEMP/9addeacb63b0071ba1e9a3cab5e21ba122fb1ae3e6720e0811c299cdc8f06edb?apiKey=fe3b0463a8ae420ab1241e00fcde5d70&width=1600 1600w, https://cdn.builder.io/api/v1/image/assets/TEMP/9addeacb63b0071ba1e9a3cab5e21ba122fb1ae3e6720e0811c299cdc8f06edb?apiKey=fe3b0463a8ae420ab1241e00fcde5d70&width=2000 2000w, https://cdn.builder.io/api/v1/image/assets/TEMP/9addeacb63b0071ba1e9a3cab5e21ba122fb1ae3e6720e0811c299cdc8f06edb?apiKey=fe3b0463a8ae420ab1241e00fcde5d70&"
-              className="img"
-            />
-            <div className="div-4">Snap a picture of your fridge</div>
+      {isLoggedIn ? (
+        <div className="div">
+          <div className="div-2">
+            <div className="div-3">
+              <img
+                loading="lazy"
+                srcSet="https://cdn.builder.io/api/v1/image/assets/TEMP/9addeacb63b0071ba1e9a3cab5e21ba122fb1ae3e6720e0811c299cdc8f06edb?apiKey=fe3b0463a8ae420ab1241e00fcde5d70&width=100 100w, https://cdn.builder.io/api/v1/image/assets/TEMP/9addeacb63b0071ba1e9a3cab5e21ba122fb1ae3e6720e0811c299cdc8f06edb?apiKey=fe3b0463a8ae420ab1241e00fcde5d70&width=200 200w, https://cdn.builder.io/api/v1/image/assets/TEMP/9addeacb63b0071ba1e9a3cab5e21ba122fb1ae3e6720e0811c299cdc8f06edb?apiKey=fe3b0463a8ae420ab1241e00fcde5d70&width=400 400w, https://cdn.builder.io/api/v1/image/assets/TEMP/9addeacb63b0071ba1e9a3cab5e21ba122fb1ae3e6720e0811c299cdc8f06edb?apiKey=fe3b0463a8ae420ab1241e00fcde5d70&width=800 800w, https://cdn.builder.io/api/v1/image/assets/TEMP/9addeacb63b0071ba1e9a3cab5e21ba122fb1ae3e6720e0811c299cdc8f06edb?apiKey=fe3b0463a8ae420ab1241e00fcde5d70&width=1200 1200w, https://cdn.builder.io/api/v1/image/assets/TEMP/9addeacb63b0071ba1e9a3cab5e21ba122fb1ae3e6720e0811c299cdc8f06edb?apiKey=fe3b0463a8ae420ab1241e00fcde5d70&width=1600 1600w, https://cdn.builder.io/api/v1/image/assets/TEMP/9addeacb63b0071ba1e9a3cab5e21ba122fb1ae3e6720e0811c299cdc8f06edb?apiKey=fe3b0463a8ae420ab1241e00fcde5d70&width=2000 2000w, https://cdn.builder.io/api/v1/image/assets/TEMP/9addeacb63b0071ba1e9a3cab5e21ba122fb1ae3e6720e0811c299cdc8f06edb?apiKey=fe3b0463a8ae420ab1241e00fcde5d70&"
+                className="img"
+              />
+              <div className="div-4">Get a picture of your fridge</div>
+            </div>
+          </div>
+          <div className="div-5">
+            <div className="div-6" onClick={handleRemoveImage}>Remove Image</div>
+            <div className="div-7" onClick={handleImageUpload}>Upload Image</div>
+            <div className="div-8" onClick={handleSubmitFinalIngredients}>Submit Final Ingredients</div>
+          </div>
+          <div className="div-9">
+            <div className="div-10">
+              <div className="div-11">Final Ingredients:</div>
+              {finalIngredients.map((ingredient, index) => (
+                <div className="div-12" key={index}>
+                  <div className="div-13" onClick={() => handleDeleteIngredient(index)}>Delete</div>
+                  <div className="div-15">{ingredient.name} - {`${(ingredient.confidence * 100).toFixed(1)}%`}</div>
+                </div>
+              ))}
+            </div>
+            <div className="div-22">
+              <div className="div-23">Uploaded Image:</div>
+              <div className="div-24" />
+            </div>
+            <div className="div-25">
+              <input
+                type="text"
+                placeholder="Enter ingredient name"
+                value={newIngredientName}
+                onChange={(e) => setNewIngredientName(e.target.value)}
+              />
+              <div className="div-26" onClick={handleAddIngredient}>Add Ingredient</div>
+            </div>
           </div>
         </div>
-        <div className="div-5">
-          <div className="div-6" onClick={handleRemoveImage}>Remove Image</div>
-          <div className="div-7" onClick={handleImageUpload}>Upload Image</div>
-          <div className="div-8" onClick={handleSubmitFinalIngredients}>Submit Final Ingredients</div>
+      ) : (
+        <div className="div">
+          <h5 style={{ margin: '20px', fontFamily: 'Arial, Helvetica, sans-serif'}}>Please log in to use this feature</h5>
         </div>
-        <div className="div-9">
-          <div className="div-10">
-            <div className="div-11">Final Ingredients:</div>
-            {finalIngredients.map((ingredient, index) => (
-  <div className="div-12" key={index}>
-    <div className="div-13" onClick={() => handleDeleteIngredient(index)}>Delete</div>
-    <div className="div-15">{ingredient.name} - {`${(ingredient.confidence * 100).toFixed(1)}%`}</div>
-  </div>
-))}
-          </div>
-          <div className="div-22">
-            <div className="div-23">Uploaded Image:</div>
-            <div className="div-24" />
-          </div>
-          <div className="div-25">
-            <input
-              type="text"
-              placeholder="Enter ingredient name"
-              value={newIngredientName}
-              onChange={(e) => setNewIngredientName(e.target.value)}
-            />
-            <div className="div-26" onClick={handleAddIngredient}>Add Ingredient</div>
-          </div>
-        </div>
-      </div>
+      )}
       {/* File input */}
       <input
         type="file"
