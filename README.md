@@ -42,10 +42,10 @@ Users are able to create an account and log into the account. From there, they c
 | GET    | /profile                      | Store user info and reference             |
 | GET    | /upload-custom-list           | Show list of users recipes                |
 | POST   | /upload-custom-recipes        | For users to upload their recipes         |
-| GET    | /custom-list/posts            | Only show posts by specific user          |
-| GET    | /custom-list/posts/:postId    | Show post detail on edit page             |
-| PUT    | /custom-list/posts/:postId    | Update new input into database            |
-| DELETE | /custom-list/posts/:postId    | Delete a custom recipe from database      |
+| GET    | /posts                        | Only show posts by specific user          |
+| GET    | /posts/:postId                | Show post detail on edit page             |
+| PUT    | /posts/:postId                | Update new input into database            |
+| DELETE | /posts/:postId                | Delete a custom recipe from database      |
 | GET    | /logout                       | Log user out                              |
 
 ### App (http://localhost:5173)
@@ -61,8 +61,8 @@ Users are able to create an account and log into the account. From there, they c
 | /about                             | `pages/About.jsx`        | Introduction of FridgeInc                        |
 | /custom-list                       | `pages/CustomList.jsx`   | Show all custom recipes                          |
 | /custom-list/:id                   | `pages/CustomDetail.jsx` | Show individual custom recipe                    |
-| /custom-list/posts                 | `pages/Posts.jsx`        | Show all custom recipes by current user          |
-| /custom-list/posts/:postId         | `pages/EditPost.jsx`     | Form to edit post                                |
+| /posts                             | `pages/Posts.jsx`        | Show all custom recipes by current user          |
+| /posts/:postId                     | `pages/EditPost.jsx`     | Form to edit post                                |
 
 ### Models 
 
@@ -106,11 +106,15 @@ The frontend of this application is made with ReactJS and Vite.
 ### Backend
 
 MongoDB database with NodeJS framework using Express. Utilized by creating a mongoDB connection string with Mongoose toolset. We also have a authentication framework with JWT in auth.js to work with the access token. 
+
+### Future Implementaion
+* Store users' profile into DB
+* Profile page in front end with tabs to individual pages for users to manage info, reference, and posts
 ___
 
 ### Contributors
 
-* [Shinika Balasundar](https://github.com/shibcreate) - 
-* [Sarah Loh](https://github.com/ritsukye) -
-* [Chloe La](https://github.com/chloela1688) -
-* [Phuong Tong](https://github.com/YPhuong15) - 
+* [Shinika Balasundar](https://github.com/shibcreate) 
+* [Sarah Loh](https://github.com/ritsukye) 
+* [Chloe La](https://github.com/chloela1688) 
+* [Phuong Tong](https://github.com/YPhuong15) 
