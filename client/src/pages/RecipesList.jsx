@@ -93,8 +93,9 @@ export default function RecipesList({ isLoggedIn, setIsLoggedIn }) {
 
   useEffect(() => {
     const storedDefaultQuery = localStorage.getItem('formattedIngredients');
-    fetchRecipes(storedDefaultQuery ? storedDefaultQuery : DEFAULT_QUERY);
-  });
+    const fetchRecipesWithQuery = storedDefaultQuery ? storedDefaultQuery : DEFAULT_QUERY;
+    fetchRecipes(fetchRecipesWithQuery);
+  }, [userQuery]);
 
 
   const fetchRecipes = async (query) => {
