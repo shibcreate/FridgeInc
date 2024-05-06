@@ -85,12 +85,10 @@ app.post('/login', async (req, res) => {
   }
 });
 
+app.post('/upload-custom-recipes', checkAuth, async (req, res) => {
+  const { name, email, recipeName, recipePic, ingredients, recipeText } = req.body;
 
-app.post('/upload-custom-recipes', async (req, res) => {
-  const { name, email, recipeName, recipePic, ingredients, recipeText, user } = req.body;
-console.log(req.body)
 const userId = req.user ? req.user._id : null;
-console.log(userId)
   try {
     const customRecs = await CustomModel.create({
       name: name, // connect the custom recipe to the user by username?
@@ -109,7 +107,6 @@ console.log(userId)
     return res.status(500).json({ error: 'Internal server error' });
   }
 });
-
 
 app.post('/save-diet-preference', async (req, res) => {
   const { email, dietPreference } = req.body;

@@ -30,15 +30,18 @@ export default function NewPost({ isLoggedIn, setIsLoggedIn }) {
 
     const saveCustomRecipes = async () => {
         try {
-            const response = await fetch('http://localhost:3001/upload-custom-recipes', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ name, email, recipeName, recipePic, ingredients, recipeText }),
+            const response = await axios.post('http://localhost:3001/upload-custom-recipes', {
+                name,
+                email,
+                recipeName,
+                recipePic,
+                ingredients,
+                recipeText
+            }, {
+                withCredentials: true 
             });
-
-            if (response.ok) {
+    
+            if (response.status === 200) {
                 console.log('Custom recipe saved successfully!');
             } else {
                 console.error('Failed to save custom recipe :(');
@@ -47,6 +50,7 @@ export default function NewPost({ isLoggedIn, setIsLoggedIn }) {
             console.error('Error saving custom recipe:', error);
         }
     };
+    
 
     const convertToBase64 = (e) => {
         var reader = new FileReader();

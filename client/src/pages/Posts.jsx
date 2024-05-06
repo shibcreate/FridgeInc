@@ -26,10 +26,12 @@ function UserPosts({ isLoggedIn, setIsLoggedIn }) {
     useEffect(() => {
         async function fetchUserPosts() {
             try {
-                const response = await axios.get('http://localhost:3001/custom-list/posts', { withCredentials: true });
+                const response = await axios.get('http://localhost:3001/custom-list/posts', 
+                { withCredentials: true, });
                 setPosts(response.data.posts);
+                console.log('Successfully fetch users posts')
             } catch (error) {
-                setError('Error fetching user posts: ' + error.message);
+                console.log('Error fetching users posts')
             }
         }
         fetchUserPosts();
@@ -46,7 +48,7 @@ function UserPosts({ isLoggedIn, setIsLoggedIn }) {
             console.error('Error deleting post:', error);
         }
     };
-
+    const maxPreparationLength = 50;
     return (
         <>
             <div className="div-2" style={{ marginBottom: '20px' }}>
@@ -55,7 +57,7 @@ function UserPosts({ isLoggedIn, setIsLoggedIn }) {
             </div>
             <div className="container">
                 <Link to="/share-recipe">
-                    <Button variant="primary" style={{ backgroundColor: '#d97255', borderColor: '#d97255' }}>
+                    <Button variant="primary" style={{ backgroundColor: '#d97255', borderColor: '#d97255', margin: '20px' }}>
                         New Recipe
                     </Button>
                 </Link>
@@ -78,7 +80,10 @@ function UserPosts({ isLoggedIn, setIsLoggedIn }) {
                                         </ul>
 
                                         <h4 className="card-text"> Preparation: <br></br> </h4>
-                                        <p style={{ whiteSpace: 'pre-line' }}>{post.recipeText}</p>
+                                        <p style={{ whiteSpace: 'pre-line' }}> {post.recipeText.length > maxPreparationLength ? 
+                                post.recipeText.substring(0, maxPreparationLength) + '...' : 
+                                post.recipeText
+                            }</p>
                                     </div>
                                     <Link to={`/custom-list/posts/${post._id}`} className="btn btn-info mr-2">Edit Details</Link>
                                     <Button variant="danger" style={{ marginTop: '10px', width: '100%' }} onClick={() => deletePost(post._id)}>Delete</Button>

@@ -23,7 +23,6 @@ const validateToken = (req, res, next) => {
 };
 
 const checkAuth = (req, res, next) => {
-  console.log('Checking authentication');
   if (typeof req.cookies['access-token'] === 'undefined' || req.cookies['access-token'] === null) {
     req.user = null;
   } else {
@@ -31,7 +30,6 @@ const checkAuth = (req, res, next) => {
     const decodedToken = jwt.decode(token, { complete: true }) || {};
     req.user = decodedToken.payload;
   }
-    console.log(req.user)
     next();
   };
 
