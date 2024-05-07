@@ -41,6 +41,7 @@ Users are able to create an account and log into the account. From there, they c
 | GET    | /authorized                   | Keep track of log in state                |
 | GET    | /profile                      | Store user info and reference             |
 | GET    | /upload-custom-list           | Show list of users recipes                |
+| GET    | /upload-custom-list/:id       | Show detail of each custom recipes        |
 | POST   | /upload-custom-recipes        | For users to upload their recipes         |
 | GET    | /posts                        | Only show posts by specific user          |
 | GET    | /posts/:postId                | Show post detail on edit page             |
