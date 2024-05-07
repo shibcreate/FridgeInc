@@ -2,11 +2,12 @@ import * as React from "react";
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
-export default function Register({isLoggedIn, setIsLoggedIn}) {
+export default function Register({ isLoggedIn, setIsLoggedIn }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordType, setPasswordType] = useState("password");
+  const [showPasswordWarning, setShowPasswordWarning] = useState(false);
 
   useEffect(() => {
     const checkAuthentication = async () => {
@@ -29,6 +30,7 @@ export default function Register({isLoggedIn, setIsLoggedIn}) {
     // Password validation logic
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@*\.])[A-Za-z\d!@*\.]{8,20}$/;
     if (!passwordRegex.test(password)) {
+      setShowPasswordWarning(true);
       console.error("Password does not meet requirements");
       return;
     }
@@ -50,9 +52,9 @@ export default function Register({isLoggedIn, setIsLoggedIn}) {
     }
   };
 
-  if(isLoggedIn) {
+  if (isLoggedIn) {
     return (
-      <h5 style={{margin: '20px', fontFamily: 'Arial, Helvetica, sans-serif'}}>You are already logged in; if you wish to create a new account, please log out first</h5>
+      <h5 style={{ margin: '20px', fontFamily: 'Arial, Helvetica, sans-serif' }}>You are already logged in; if you wish to create a new account, please log out first</h5>
     )
   }
 
@@ -74,6 +76,7 @@ export default function Register({isLoggedIn, setIsLoggedIn}) {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     className="div-10"
+                    required
                   />
                 </div>
               </div>
@@ -86,6 +89,7 @@ export default function Register({isLoggedIn, setIsLoggedIn}) {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="div-15"
+                    required
                   />
                 </div>
               </div>
@@ -98,9 +102,15 @@ export default function Register({isLoggedIn, setIsLoggedIn}) {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     className="div-20"
+                    required
                   />
                 </div>
               </div>
+              {password && showPasswordWarning && (
+                <div style={{ backgroundColor: 'rgba(255, 0, 0, 0.2)', padding: '10px', border: '1px solid red', borderRadius: '5px', marginBottom: '10px' }}>
+                  Password does not meet requirements
+                </div>
+              )}
               <div className="div-21">
                 <label className="div-23">
                   <input type="checkbox" onChange={(e) => setPasswordType(e.target.checked ? "text" : "password")} /> Show Password

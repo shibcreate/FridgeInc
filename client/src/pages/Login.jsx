@@ -8,6 +8,7 @@ export default function Login({isLoggedIn, setIsLoggedIn}) {
   const [password, setPassword] = useState("");
   const [passwordType, setPasswordType] = useState("password");
   const navigate = useNavigate();
+  const [showPasswordWarning, setShowPasswordWarning] = useState(false);
 
   useEffect(() => {
     const checkAuthentication = async () => {
@@ -40,6 +41,7 @@ export default function Login({isLoggedIn, setIsLoggedIn}) {
         navigate('/profile', { state: { email, name: response.data.name } });
       }
     } catch (error) {
+      setShowPasswordWarning(true);
       console.error('Error:', error);
     }
   };
@@ -81,9 +83,15 @@ export default function Login({isLoggedIn, setIsLoggedIn}) {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       className="div-20"
+                      required
                     />
                   </div>
                 </div>
+                {password && showPasswordWarning && (
+                <div style={{ backgroundColor: 'rgba(255, 0, 0, 0.2)', padding: '10px', border: '1px solid red', borderRadius: '5px', marginBottom: '10px' }}>
+                  Password incorrect. Try Again.
+                </div>
+              )}
                 <div className="div-21">
                   <label className="div-23">
                     <input type="checkbox" onChange={(e) => setPasswordType(e.target.checked ? "text" : "password")} /> Show Password
